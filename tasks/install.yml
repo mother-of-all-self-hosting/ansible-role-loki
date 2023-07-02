@@ -1,0 +1,37 @@
+---
+
+- name: Ensure loki path exists
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0700
+    owner: "{{ loki_uid }}"
+    group: "{{ loki_gid }}"
+  with_items:
+    - {path: "{{ loki_base_path }}", when: true}
+    - {path: "{{ loki_config_path }}", when: true}
+
+
+- name: Ensure loki configuration is deployed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/env.j2"
+    dest: "{{ loki_config_path }}/env"
+    owner: "{{ loki_uid }}"
+    group: "{{ loki_gid }}"
+    mode: 0640
+
+- name: Ensure loki network is created in Docker
+  community.docker.docker_network:
+    name: "{{ loki_container_network }}"
+    driver: bridge
+
+- name: Ensure loki container image is pulled
+  community.docker.docker_image:
+    name: "{{ loki_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+
+- name: Ensure loki.service installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/loki.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
+    mode: 0644

@@ -1,0 +1,38 @@
+[Unit]
+Description=loki time-series database ({{ loki_identifier }})
+{% for service in loki_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ loki_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ loki_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+                --rm \
+                --name={{ loki_identifier }} \
+                --log-driver=none \
+                --user={{ loki_uid }}:{{ loki_gid }} \
+                --cap-drop=ALL \
+                --read-only \
+                --network={{ loki_container_network }} \
+                --env-file={{ loki_env_path }} \
+                {{ loki_container_image }} --config {{ loki_config_link }} {% if loki_debug %} --debug {%endif%}
+
+{% for network in loki_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ loki_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ loki_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} kill {{ loki_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ loki_identifier }} 2>/dev/null || true'
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ loki_identifier }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,46 @@
+---
+
+loki_enabled: true
+loki_identifier: loki
+
+loki_uid: ''
+loki_gid: ''
+
+loki_base_path: "/{{ loki_identifier }}"
+loki_config_path: "{{ loki_base_path }}/config"
+loki_data_path: "{{ loki_base_path }}/data"
+loki_env_path: "{{ loki_config_path }}/env"
+
+loki_systemd_required_services_list: ['docker.service']
+
+loki_version: 1.27.1
+
+loki_container_image: "{{ loki_container_image_registry_prefix }}library/loki:{{ loki_container_image_tag }}"
+loki_container_image_registry_prefix: docker.io/
+loki_container_image_tag: "{{ loki_version }}"
+loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}"
+
+loki_container_network: '{{ loki_identifier }}'
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to a reverse proxy, which runs in a different container network and influxdb.
+loki_container_additional_networks: []
+
+# The following must be set to enable loki to be configured via influxdb
+# You need to obtain these values in a set-up influxdb via Load Data -> loki
+# then adding a loki configuraion. Then you should copy these values from the setup instructions.
+loki_influx_token: ''
+loki_config_link: ''
+
+# Set true to get a lot more logs on loki's behaviour
+loki_debug: false
+
+# Additional environment variables to pass to the loki container.
+# You can use this to further influence the default configuration.
+#
+# Example:
+# loki_environment_variables_extension: |
+#   INFLUXD_BOLT_PATH=/root/loki.bolt
+#   DOCKER_loki_INIT_RETENTION=90d
+loki_environment_variables_extension: ''

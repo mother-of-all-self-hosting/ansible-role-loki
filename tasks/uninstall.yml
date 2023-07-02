@@ -1,0 +1,23 @@
+---
+
+- name: Check existence of loki systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
+  register: loki_service_stat
+
+- when: loki_service_stat.stat.exists | bool
+  block:
+    - name: Ensure loki service is stopped
+      ansible.builtin.service:
+        name: "{{ loki_identifier }}"
+        state: stopped
+        daemon_reload: true
+    - name: Ensure loki service doesn't exist
+      ansible.builtin.file:
+        dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
+        state: absent
+
+    - name: Ensure loki base path is files deleted (make sure to delete node data)
+      ansible.builtin.file:
+        path: "{{ loki_base_path }}"
+        state: absent

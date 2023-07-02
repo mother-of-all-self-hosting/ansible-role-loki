@@ -1,0 +1,26 @@
+---
+
+- block:
+    - when: loki_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+  tags:
+    - setup-all
+    - setup-loki
+    - install-all
+    - install-loki
+
+- block:
+    - when: loki_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+  tags:
+    - setup-all
+    - setup-loki
+    - install-all
+    - install-loki
+
+- block:
+    - when: not loki_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+  tags:
+    - setup-all
+    - setup-loki
