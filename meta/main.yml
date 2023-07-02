@@ -2,7 +2,7 @@ galaxy_info:
   role_name: loki
   author: Julian-Samuel Gebühr
   company: Hyteck
-  description: Ansible role to install loki, a plugin-driven server agent for collecting & reporting metrics. 
+  description: Ansible role to install loki, a log aggregation system designed to store and query logs from all your applications and infrastructure.
   platforms:
     - name: Debian
       versions:

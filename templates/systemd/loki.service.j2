@@ -19,6 +19,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
                 --cap-drop=ALL \
                 --read-only \
                 --network={{ loki_container_network }} \
+                --mount type=bind,src={{ loki_data_path }},dst=/loki \
                 --env-file={{ loki_env_path }} \
                 {{ loki_container_image }} --config {{ loki_config_link }} {% if loki_debug %} --debug {%endif%}
 

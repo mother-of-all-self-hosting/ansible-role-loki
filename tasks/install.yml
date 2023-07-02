@@ -10,6 +10,7 @@
   with_items:
     - {path: "{{ loki_base_path }}", when: true}
     - {path: "{{ loki_config_path }}", when: true}
+    - {path: "{{ loki_data_path }}", when: true}
 
 
 - name: Ensure loki configuration is deployed
