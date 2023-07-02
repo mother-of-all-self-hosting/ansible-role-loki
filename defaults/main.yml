@@ -13,9 +13,9 @@ loki_env_path: "{{ loki_config_path }}/env"
 
 loki_systemd_required_services_list: ['docker.service']
 
-loki_version: 1.27.1
+loki_version: 2.8.2
 
-loki_container_image: "{{ loki_container_image_registry_prefix }}library/loki:{{ loki_container_image_tag }}"
+loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
 loki_container_image_registry_prefix: docker.io/
 loki_container_image_tag: "{{ loki_version }}"
 loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}"
