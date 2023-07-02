@@ -27,14 +27,10 @@ loki_container_network: '{{ loki_identifier }}'
 # Use this to expose this container to a reverse proxy, which runs in a different container network and influxdb.
 loki_container_additional_networks: []
 
-# The following must be set to enable loki to be configured via influxdb
-# You need to obtain these values in a set-up influxdb via Load Data -> loki
-# then adding a loki configuraion. Then you should copy these values from the setup instructions.
-loki_influx_token: ''
-loki_config_link: ''
-
-# Set true to get a lot more logs on loki's behaviour
-loki_debug: false
+# Controls whether the loki container exposes its HTTP port.
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
+loki_container_http_host_bind_port: "3100"
 
 # Additional environment variables to pass to the loki container.
 # You can use this to further influence the default configuration.
