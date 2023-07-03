@@ -1,5 +1,7 @@
 # Loki Ansible Role
 
+*Work in progress, do NOT use yet*
+
 [loki](https://grafana.com/oss/loki/) is a log aggregation system designed to store and query logs from all your applications and infrastructure. This role helps you to set up loki:
 
 - with everything run in [Docker](https://www.docker.com/) containers
