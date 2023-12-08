@@ -13,13 +13,13 @@
     - {path: "{{ loki_data_path }}", when: true}
 
 
-- name: Ensure loki configuration is deployed
-  ansible.builtin.template:
-    src: "{{ role_path }}/templates/env.j2"
-    dest: "{{ loki_config_path }}/env"
+- name: Ensure loki.yml installed
+  ansible.builtin.copy:
+    content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ loki_config_path }}/local-config.yml"
+    mode: 0644
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
-    mode: 0640
 
 - name: Ensure loki network is created in Docker
   community.docker.docker_network:

@@ -30,13 +30,39 @@ loki_container_additional_networks: []
 # Controls whether the loki container exposes its HTTP port.
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
-loki_container_http_host_bind_port: "3100"
+loki_container_http_host_bind_port: ""
 
-# Additional environment variables to pass to the loki container.
-# You can use this to further influence the default configuration.
+# The ports loki will use for http/grpc inside the container
+loki_container_http_port: "3100"
+loki_container_grpc_port: "9096"
+
+# Storage locations in container
+loki_container_common_path_prefix: "/loki"
+loki_container_storage_chunks_directory: "{{ loki_container_common_path_prefix }}/chunks"
+loki_container_storage_rules_directory: "{{ loki_container_common_path_prefix }}/rules"
+
+# Controls whether loki will send anonymous, but uniquely-identifiable usage and configuration
+# analytics to Grafana Labs
+loki_reporting_enabled: ""
+
+# Default loki configuration template which covers the generic use case.
+# You can customize it by controlling the various variables inside it.
 #
-# Example:
-# loki_environment_variables_extension: |
-#   INFLUXD_BOLT_PATH=/root/loki.bolt
-#   DOCKER_loki_INIT_RETENTION=90d
-loki_environment_variables_extension: ''
+# For a more advanced customization, you can extend the default (see `loki_configuration_extension_yaml`)
+# or completely replace this variable with your own template.
+loki_configuration_yaml: "{{ lookup('template', 'templates/loki-config.yaml.j2') }}"
+
+loki_configuration_extension_yaml: |
+  # Your custom YAML configuration goes here.
+  # This configuration extends the default starting configuration (`loki_configuration_yaml`).
+  #
+  # You can override individual variables from the default configuration, or introduce new ones.
+  #
+  # If you need something more special, you can take full control by
+  # completely redefining `loki_configuration_yaml`.
+
+loki_configuration_extension: "{{ loki_configuration_extension_yaml | from_yaml if loki_configuration_extension_yaml | from_yaml is mapping else {} }}"
+
+# Holds the final configuration (a combination of the default and its extension).
+# You most likely don't need to touch this variable. Instead, see `loki_configuration_yaml`.
+loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_configuration_extension, recursive=True) }}"
