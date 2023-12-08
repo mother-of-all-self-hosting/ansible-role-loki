@@ -1,0 +1,35 @@
+{% if loki_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if loki_container_labels_traefik_docker_network %}
+traefik.docker.network={{ loki_container_labels_traefik_docker_network }}
+{% endif %}
+
+traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_container_http_port }}
+
+{% set middlewares = [] %}
+
+{% if loki_basic_auth_enabled %}
+traefik.http.middlewares.{{ loki_identifier }}-auth.basicauth.users={{ loki_container_label_basicauth_users }}
+{% set middlewares = middlewares + [loki_identifier + '-auth@docker'] %}
+{% endif %}
+
+traefik.http.middlewares.{{ loki_identifier }}-strip-prefix.stripprefix.prefixes={{ loki_path_prefix }}
+{% set middlewares = middlewares + [loki_identifier + '-strip-prefix@docker'] %}
+
+traefik.http.routers.{{ loki_identifier }}.rule={{ loki_container_labels_traefik_rule }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ loki_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ loki_identifier }}.service={{ loki_identifier }}
+traefik.http.routers.{{ loki_identifier }}.priority={{ loki_container_labels_traefik_priority }}
+traefik.http.routers.{{ loki_identifier }}.tls={{ loki_container_labels_traefik_tls | to_json }}
+{% if loki_container_labels_traefik_tls %}
+traefik.http.routers.{{ loki_identifier }}.tls.certResolver={{ loki_container_labels_traefik_tls_certResolver }}
+{% endif %}
+traefik.http.routers.{{ loki_identifier }}.entrypoints={{ loki_container_labels_traefik_entrypoints }}
+{% endif %}
+traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_container_http_port }}
+
+
+{{ loki_container_labels_additional_labels }}

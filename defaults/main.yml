@@ -3,13 +3,16 @@
 loki_enabled: true
 loki_identifier: loki
 
+loki_hostname: ''
+loki_path_prefix: ''
+
 loki_uid: ''
 loki_gid: ''
 
 loki_base_path: "/{{ loki_identifier }}"
 loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
-loki_env_path: "{{ loki_config_path }}/env"
+loki_env_path: "{{ loki_base_path }}/env"
 
 loki_systemd_required_services_list: ['docker.service']
 
@@ -27,6 +30,8 @@ loki_container_network: '{{ loki_identifier }}'
 # Use this to expose this container to a reverse proxy, which runs in a different container network and influxdb.
 loki_container_additional_networks: []
 
+
+
 # Controls whether the loki container exposes its HTTP port.
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
@@ -35,6 +40,65 @@ loki_container_http_host_bind_port: ""
 # The ports loki will use for http/grpc inside the container
 loki_container_http_port: "3100"
 loki_container_grpc_port: "9096"
+
+# loki_basic_auth_enabled controls whether HTTP Basic Auth is enabled.
+# Also see `loki_container_label_basicauth_users`.
+loki_basic_auth_enabled: false
+loki_basic_auth_username: ''
+loki_basic_auth_password: ''
+# loki_container_label_basicauth_users is populated at runtime based on
+# loki_basic_auth_username and loki_basic_auth_password
+loki_container_label_basicauth_users: ''
+loki_basic_auth_apache_container_image: "{{ loki_basic_auth_apache_container_image_registry_prefix }}httpd:{{ loki_basic_auth_apache_container_image_tag }}"
+loki_basic_auth_apache_container_image_tag: "2.4.56-alpine3.17"
+loki_basic_auth_apache_container_image_force_pull: "{{ loki_basic_auth_apache_container_image.endswith(':latest') }}"
+loki_basic_auth_apache_container_image_registry_prefix: docker.io/
+
+# loki_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `loki_container_labels_additional_labels`.
+loki_container_labels_traefik_enabled: false
+loki_container_labels_traefik_docker_network: "{{ loki_container_network }}"
+loki_container_labels_traefik_hostname: "{{ loki_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/loki`).
+loki_container_labels_traefik_path_prefix: "{{ loki_path_prefix }}"
+loki_container_labels_traefik_rule: "Host(`{{ loki_container_labels_traefik_hostname }}`){% if loki_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ loki_container_labels_traefik_path_prefix }}`){% endif %}"
+loki_container_labels_traefik_priority: 0
+loki_container_labels_traefik_entrypoints: web-secure
+loki_container_labels_traefik_tls: "{{ loki_container_labels_traefik_entrypoints != 'web' }}"
+loki_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# loki_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# loki_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+loki_container_labels_additional_labels: ''
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `loki_container_labels_traefik_additional_response_headers_custom`
+loki_container_labels_traefik_additional_request_headers: "{{ loki_container_labels_traefik_additional_request_headers_auto | combine(loki_container_labels_traefik_additional_request_headers_custom) }}"
+loki_container_labels_traefik_additional_request_headers_auto: {}
+loki_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `loki_container_labels_traefik_additional_response_headers_custom`
+loki_container_labels_traefik_additional_response_headers: "{{ loki_container_labels_traefik_additional_response_headers_auto | combine(loki_container_labels_traefik_additional_response_headers_custom) }}"
+loki_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': loki_http_header_xss_protection} if loki_http_header_xss_protection else {})
+    | combine ({'X-Frame-Options': loki_http_header_frame_options} if loki_http_header_frame_options else {})
+    | combine ({'X-Content-Type-Options': loki_http_header_content_type_options} if loki_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': loki_http_header_content_security_policy} if loki_http_header_content_security_policy else {})
+    | combine ({'Permission-Policy': loki_http_header_content_permission_policy} if loki_http_header_content_permission_policy else {})
+    | combine ({'Strict-Transport-Security': loki_http_header_strict_transport_security} if loki_http_header_strict_transport_security and loki_container_labels_traefik_tls else {})
+  }}
+loki_container_labels_traefik_additional_response_headers_custom: {}
+
 
 # Storage locations in container
 loki_container_common_path_prefix: "/loki"
@@ -66,3 +130,11 @@ loki_configuration_extension: "{{ loki_configuration_extension_yaml | from_yaml 
 # Holds the final configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `loki_configuration_yaml`.
 loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_configuration_extension, recursive=True) }}"
+
+# Additional environment variables to pass to the loki container.
+# You can use this to further influence the default configuration.
+#
+# Example:
+# loki_environment_variables_extension: |
+#   LOKI_SOMETHING=true
+loki_environment_variables_extension: ''

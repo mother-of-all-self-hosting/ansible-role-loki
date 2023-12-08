@@ -25,7 +25,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
                 --mount type=bind,src={{ loki_data_path }},dst=/loki \
                 --mount type=bind,src={{ loki_config_path }},dst=/etc/loki/ \
                 --env-file={{ loki_env_path }} \
-                {{ loki_container_image }} --config {{ loki_config_link }} {% if loki_debug %} --debug {%endif%}
+                {{ loki_container_image }}
 
 {% for network in loki_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ loki_identifier }}

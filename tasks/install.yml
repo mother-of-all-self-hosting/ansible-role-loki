@@ -16,10 +16,21 @@
 - name: Ensure loki.yml installed
   ansible.builtin.copy:
     content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ loki_config_path }}/local-config.yml"
+    dest: "{{ loki_config_path }}/local-config.yaml"
     mode: 0644
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
+
+- name: Ensure Loki support files created
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ loki_base_path }}/{{ item }}"
+    owner: "{{ loki_uid }}"
+    group: "{{ loki_gid }}"
+    mode: 0640
+  with_items:
+    - labels
+    - env
 
 - name: Ensure loki network is created in Docker
   community.docker.docker_network:

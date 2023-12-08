@@ -16,8 +16,7 @@ To configure and install loki on your own server(s), you should use a playbook l
 
 ```yaml
 loki_enabled: true
-loki_influx_token: SUPERSECRETTOKEN
-loki_config_link: https://influxdb.example.org/api/v2/lokis/01234569
+loki_hostname: loki.example.org
 ```
 
 ## Usage
