@@ -1,26 +1,25 @@
 ---
 
-- block:
+- name: Run Loki installation tasks
+  tags:
+    - setup-all
+    - setup-loki
+    - install-all
+    - install-loki
+  block:
     - when: loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-  tags:
-    - setup-all
-    - setup-loki
-    - install-all
-    - install-loki
 
-- block:
+    - when: loki_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/prepare_basic_auth.yml"
+
     - when: loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Run Loki uninstallation tasks
   tags:
     - setup-all
     - setup-loki
-    - install-all
-    - install-loki
-
-- block:
+  block:
     - when: not loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
-  tags:
-    - setup-all
-    - setup-loki
