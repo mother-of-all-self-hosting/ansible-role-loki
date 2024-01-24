@@ -38,10 +38,10 @@ Usually you should also set up basic_auth in this case, otherwise everyone will 
 ```yaml
 loki_hostname: loki.example.org
 
-# Uncommenting the following lines allows you to configure basic auth
-# loki_basic_auth_enabled: true
-# loki_basic_auth_username: ''
-# loki_basic_auth_password: ''
+# Uncomment following lines to add basic auth
+#loki_container_labels_metrics_middleware_basic_auth_enabled: true
+#loki_container_labels_metrics_middleware_basic_auth_users : '<user>:<hashed_password>'
+
 ```
 
 ## Usage
