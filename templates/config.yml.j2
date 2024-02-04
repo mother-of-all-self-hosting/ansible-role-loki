@@ -28,7 +28,7 @@ ruler:
 # https://github.com/grafana/loki/blob/main/pkg/usagestats/stats.go
 # Refer to the buildReport method to see what goes into a report.
 analytics:
-  reporting_enabled: {{ loki_reporting_enabled | to_json }}
+  reporting_enabled: {{ loki_analytics_reporting_enabled | to_json }}
 
 
 query_range:

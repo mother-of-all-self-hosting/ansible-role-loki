@@ -18,4 +18,5 @@
     - {'old': 'loki_basic_auth_enabled', 'new': 'loki_container_labels_middleware_basic_auth_enabled'}
     - {'old': 'loki_basic_auth_username', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
     - {'old': 'loki_basic_auth_password', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
+    - {'old': 'loki_reporting_enabled', 'new': 'loki_analytics_reporting_enabled'}
 
