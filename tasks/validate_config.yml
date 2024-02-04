@@ -19,4 +19,8 @@
     - {'old': 'loki_basic_auth_username', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
     - {'old': 'loki_basic_auth_password', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
     - {'old': 'loki_reporting_enabled', 'new': 'loki_analytics_reporting_enabled'}
-
+    - {'old': 'loki_container_common_path_prefix', 'new': 'loki_common_path_prefix'}
+    - {'old': 'loki_container_storage_chunks_directory', 'new': 'loki_storage_chunks_directory'}
+    - {'old': 'loki_container_storage_rules_directory', 'new': 'loki_storage_rules_directory'}
+    - {'old': 'loki_container_http_port', 'new': 'loki_server_http_listen_port'}
+    - {'old': 'loki_container_grpc_port', 'new': 'loki_server_grpc_listen_port'}

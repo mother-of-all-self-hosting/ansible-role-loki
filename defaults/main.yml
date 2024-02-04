@@ -40,8 +40,8 @@ loki_container_additional_networks_custom: []
 loki_container_http_host_bind_port: ""
 
 # The ports loki will use for http/grpc inside the container
-loki_container_http_port: "3100"
-loki_container_grpc_port: "9096"
+loki_server_http_listen_port: "3100"
+loki_server_grpc_listen_port: "9096"
 
 # loki_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -93,9 +93,9 @@ loki_container_labels_traefik_additional_response_headers_custom: {}
 
 
 # Storage locations in container
-loki_container_common_path_prefix: "/loki"
-loki_container_storage_chunks_directory: "{{ loki_container_common_path_prefix }}/chunks"
-loki_container_storage_rules_directory: "{{ loki_container_common_path_prefix }}/rules"
+loki_common_path_prefix: "/loki"
+loki_storage_chunks_directory: "{{ loki_common_path_prefix }}/chunks"
+loki_storage_rules_directory: "{{ loki_common_path_prefix }}/rules"
 
 # Controls whether loki will send anonymous, but uniquely-identifiable usage and configuration
 # analytics to Grafana Labs

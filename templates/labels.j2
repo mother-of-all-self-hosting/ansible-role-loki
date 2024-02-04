@@ -5,7 +5,7 @@ traefik.enable=true
 traefik.docker.network={{ loki_container_labels_traefik_docker_network }}
 {% endif %}
 
-traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_container_http_port }}
+traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_server_http_listen_port }}
 
 {% set middlewares = [] %}
 
@@ -29,7 +29,7 @@ traefik.http.routers.{{ loki_identifier }}.tls.certResolver={{ loki_container_la
 {% endif %}
 traefik.http.routers.{{ loki_identifier }}.entrypoints={{ loki_container_labels_traefik_entrypoints }}
 {% endif %}
-traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_container_http_port }}
+traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_server_http_listen_port }}
 
 
 {{ loki_container_labels_additional_labels }}

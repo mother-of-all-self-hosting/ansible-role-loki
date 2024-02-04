@@ -1,16 +1,16 @@
 auth_enabled: false
 
 server:
-  http_listen_port: {{ loki_container_http_port }}
-  grpc_listen_port: {{ loki_container_grpc_port }}
+  http_listen_port: {{ loki_server_http_listen_port | to_json }}
+  grpc_listen_port: {{ loki_server_grpc_listen_port | to_json }}
 
 common:
   instance_addr: 127.0.0.1
-  path_prefix: {{ loki_container_common_path_prefix | to_json }}
+  path_prefix: {{ loki_common_path_prefix | to_json }}
   storage:
     filesystem:
-      chunks_directory: {{ loki_container_storage_chunks_directory | to_json }}
-      rules_directory: {{ loki_container_storage_rules_directory | to_json }}
+      chunks_directory: {{ loki_storage_chunks_directory | to_json }}
+      rules_directory: {{ loki_storage_rules_directory | to_json }}
   replication_factor: 1
   ring:
     kvstore:
