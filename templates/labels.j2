@@ -18,18 +18,20 @@ traefik.http.middlewares.{{ loki_identifier }}-strip-prefix.stripprefix.prefixes
 {% set middlewares = middlewares + [loki_identifier + '-strip-prefix@docker'] %}
 
 traefik.http.routers.{{ loki_identifier }}.rule={{ loki_container_labels_traefik_rule }}
+
 {% if middlewares | length > 0 %}
 traefik.http.routers.{{ loki_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
+
 traefik.http.routers.{{ loki_identifier }}.service={{ loki_identifier }}
 traefik.http.routers.{{ loki_identifier }}.priority={{ loki_container_labels_traefik_priority }}
+traefik.http.routers.{{ loki_identifier }}.entrypoints={{ loki_container_labels_traefik_entrypoints }}
+
 traefik.http.routers.{{ loki_identifier }}.tls={{ loki_container_labels_traefik_tls | to_json }}
 {% if loki_container_labels_traefik_tls %}
 traefik.http.routers.{{ loki_identifier }}.tls.certResolver={{ loki_container_labels_traefik_tls_certResolver }}
 {% endif %}
-traefik.http.routers.{{ loki_identifier }}.entrypoints={{ loki_container_labels_traefik_entrypoints }}
-{% endif %}
-traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_server_http_listen_port }}
 
+{% endif %}
 
 {{ loki_container_labels_additional_labels }}
