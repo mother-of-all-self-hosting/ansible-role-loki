@@ -91,6 +91,9 @@ loki_container_labels_traefik_additional_response_headers_auto: |
   }}
 loki_container_labels_traefik_additional_response_headers_custom: {}
 
+# Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
+# Despite the confusing name, this has nothing to do with authentication.
+loki_auth_enabled: false
 
 # Storage locations in container
 loki_common_path_prefix: "/loki"
