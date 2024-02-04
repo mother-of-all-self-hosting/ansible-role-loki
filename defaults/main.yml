@@ -57,7 +57,8 @@ loki_container_labels_traefik_priority: 0
 loki_container_labels_traefik_entrypoints: web-secure
 loki_container_labels_traefik_tls: "{{ loki_container_labels_traefik_entrypoints != 'web' }}"
 loki_container_labels_traefik_tls_certResolver: default  # noqa var-naming
-loki_container_labels_middleware_basic_auth_enabled: false
+# For security reasons, we default this to true (if exposing publicly) and ask people to explicitly disable it.
+loki_container_labels_middleware_basic_auth_enabled: "{{ loki_container_labels_traefik_enabled }}"
 # See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
 loki_container_labels_middleware_basic_auth_users: ''
 
