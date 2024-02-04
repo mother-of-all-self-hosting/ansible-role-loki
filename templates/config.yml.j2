@@ -1,8 +1,8 @@
 auth_enabled: {{ loki_auth_enabled | to_json }}
 
 server:
-  http_listen_port: {{ loki_server_http_listen_port | to_json }}
-  grpc_listen_port: {{ loki_server_grpc_listen_port | to_json }}
+  http_listen_port: {{ loki_server_http_listen_port | int | to_json }}
+  grpc_listen_port: {{ loki_server_grpc_listen_port | int | to_json }}
 
 common:
   instance_addr: 127.0.0.1
