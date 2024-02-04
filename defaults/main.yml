@@ -43,10 +43,6 @@ loki_container_http_host_bind_port: ""
 loki_container_http_port: "3100"
 loki_container_grpc_port: "9096"
 
-loki_container_labels_metrics_middleware_basic_auth_enabled: false
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
-loki_container_labels_metrics_middleware_basic_auth_users: ''
-
 # loki_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
 #
@@ -61,6 +57,9 @@ loki_container_labels_traefik_priority: 0
 loki_container_labels_traefik_entrypoints: web-secure
 loki_container_labels_traefik_tls: "{{ loki_container_labels_traefik_entrypoints != 'web' }}"
 loki_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+loki_container_labels_middleware_basic_auth_enabled: false
+# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+loki_container_labels_middleware_basic_auth_users: ''
 
 # loki_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.

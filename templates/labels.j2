@@ -9,9 +9,9 @@ traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_con
 
 {% set middlewares = [] %}
 
-{% if loki_container_labels_metrics_middleware_basic_auth_enabled %}
+{% if loki_container_labels_middleware_basic_auth_enabled %}
 {% set middlewares = middlewares + [loki_identifier + '-basic-auth'] %}
-traefik.http.middlewares.{{ loki_identifier }}-basic-auth.basicauth.users={{ loki_container_labels_metrics_middleware_basic_auth_users }}
+traefik.http.middlewares.{{ loki_identifier }}-basic-auth.basicauth.users={{ loki_container_labels_middleware_basic_auth_users }}
 {% endif %}
 
 traefik.http.middlewares.{{ loki_identifier }}-strip-prefix.stripprefix.prefixes={{ loki_path_prefix }}

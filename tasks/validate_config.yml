@@ -15,7 +15,7 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'loki_basic_auth_enabled', 'new': 'loki_container_labels_metrics_middleware_basic_auth_enabled'}
-    - {'old': 'loki_basic_auth_username', 'new': '<superseded by prometheus_ssh_exporter_container_labels_metrics_middleware_basic_auth_users>'}
-    - {'old': 'loki_basic_auth_password', 'new': '<superseded by prometheus_ssh_exporter_container_labels_metrics_middleware_basic_auth_users>'}
+    - {'old': 'loki_basic_auth_enabled', 'new': 'loki_container_labels_middleware_basic_auth_enabled'}
+    - {'old': 'loki_basic_auth_username', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
+    - {'old': 'loki_basic_auth_password', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
 
