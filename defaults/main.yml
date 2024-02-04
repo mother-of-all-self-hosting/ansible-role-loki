@@ -30,10 +30,9 @@ loki_container_network: '{{ loki_identifier }}'
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
-# Use this to expose this container to a reverse proxy, which runs in a different container network and influxdb.
-loki_container_additional_networks: []
-
-
+loki_container_additional_networks: "{{ loki_container_additional_networks_auto + loki_container_additional_networks_custom }}"
+loki_container_additional_networks_auto: []
+loki_container_additional_networks_custom: []
 
 # Controls whether the loki container exposes its HTTP port.
 #
