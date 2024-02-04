@@ -19,7 +19,7 @@ loki_systemd_required_services_list_default: ['docker.service']
 loki_systemd_required_services_list_auto: []
 loki_systemd_required_services_list_custom: []
 
-loki_version: 2.8.7
+loki_version: 2.9.4
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
 loki_container_image_registry_prefix: docker.io/
