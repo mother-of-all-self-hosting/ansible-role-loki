@@ -3,10 +3,11 @@
 - name: Fail if required Loki settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) for using this role.
-  when: "vars[item] == ''"
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and vars[item.name] == ''"
   with_items:
-    - loki_enabled
+    - {'name': 'loki_container_labels_traefik_hostname', when: "{{ loki_container_labels_traefik_enabled }}"}
+    - {'name': 'loki_container_labels_middleware_basic_auth_users', when: "{{ loki_container_labels_middleware_basic_auth_enabled }}"}
 
 - name: (Deprecation) Catch and report renamed Loki settings
   ansible.builtin.fail:
