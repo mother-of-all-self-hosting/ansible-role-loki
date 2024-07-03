@@ -49,7 +49,7 @@ loki_server_grpc_listen_port: "9096"
 # See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `loki_container_labels_additional_labels`.
-loki_container_labels_traefik_enabled: false
+loki_container_labels_traefik_enabled: "{{ true if loki_hostname else false }}"
 loki_container_labels_traefik_docker_network: "{{ loki_container_network }}"
 loki_container_labels_traefik_hostname: "{{ loki_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/loki`).
