@@ -31,8 +31,8 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if loki_container_http_host_bind_port %}
       -p {{ loki_container_http_host_bind_port }}:{{ loki_server_http_listen_port }} \
       {% endif %}
-      --label-file={{ loki_base_path }}/labels \
       --env-file={{ loki_env_path }} \
+      --label-file={{ loki_base_path }}/labels \
       --mount type=bind,src={{ loki_data_path }},dst=/loki \
       --mount type=bind,src={{ loki_config_path }},dst=/etc/loki,ro \
       {{ loki_container_image }}
@@ -45,6 +45,7 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {
 
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ loki_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ loki_identifier }} 2>/dev/null || true'
+
 Restart=always
 RestartSec=30
 SyslogIdentifier={{ loki_identifier }}
