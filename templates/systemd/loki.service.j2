@@ -21,21 +21,21 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ loki_identifier }} 2>/dev/null || true'
 
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-                --rm \
-                --name={{ loki_identifier }} \
-                --log-driver=none \
-                --user={{ loki_uid }}:{{ loki_gid }} \
-                --cap-drop=ALL \
-                --read-only \
-                --network={{ loki_container_network }} \
-                {% if loki_container_http_host_bind_port %}
-                -p {{ loki_container_http_host_bind_port }}:{{ loki_server_http_listen_port }} \
-                {% endif %}
-                --label-file={{ loki_base_path }}/labels \
-                --env-file={{ loki_env_path }} \
-                --mount type=bind,src={{ loki_data_path }},dst=/loki \
-                --mount type=bind,src={{ loki_config_path }},dst=/etc/loki,ro \
-                {{ loki_container_image }}
+      --rm \
+      --name={{ loki_identifier }} \
+      --log-driver=none \
+      --user={{ loki_uid }}:{{ loki_gid }} \
+      --cap-drop=ALL \
+      --read-only \
+      --network={{ loki_container_network }} \
+      {% if loki_container_http_host_bind_port %}
+      -p {{ loki_container_http_host_bind_port }}:{{ loki_server_http_listen_port }} \
+      {% endif %}
+      --label-file={{ loki_base_path }}/labels \
+      --env-file={{ loki_env_path }} \
+      --mount type=bind,src={{ loki_data_path }},dst=/loki \
+      --mount type=bind,src={{ loki_config_path }},dst=/etc/loki,ro \
+      {{ loki_container_image }}
 
 {% for network in loki_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ loki_identifier }}
