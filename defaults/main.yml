@@ -23,7 +23,7 @@ loki_storage_chunks_directory: "{{ loki_base_path }}/chunks" # Storage locations
 loki_storage_rules_directory: "{{ loki_base_path }}/rules" # Storage locations in container
 
 # renovate: datasource=docker depName=grafana/loki versioning=semver
-loki_version: 2.9.4
+loki_version: 3.5.0
 
 loki_uid: ''
 loki_gid: ''
