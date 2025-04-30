@@ -162,6 +162,9 @@ loki_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_do
 loki_systemd_required_services_list_auto: []
 loki_systemd_required_services_list_custom: []
 
+# List of systemd services that the Loki systemd service wants
+loki_systemd_wanted_services_list: []
+
 # Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
 #
 # Despite the confusing name, this has nothing to do with authentication.
