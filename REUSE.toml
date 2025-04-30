@@ -8,6 +8,7 @@ version = 1
 [[annotations]]
 path = [
     ".config/ansible-lint.yml",
+    ".github/renovate.json",
     "meta/main.yml",
     ".gitignore",
     ".woodpecker.yml"
