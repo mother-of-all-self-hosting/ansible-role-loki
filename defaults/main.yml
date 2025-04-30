@@ -42,12 +42,12 @@ loki_container_additional_networks: "{{ loki_container_additional_networks_auto 
 loki_container_additional_networks_auto: []
 loki_container_additional_networks_custom: []
 
-# Controls whether the loki container exposes its HTTP port.
+# Controls whether the Loki container exposes its HTTP port.
 #
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
 loki_container_http_host_bind_port: ""
 
-# The ports loki will use for http/grpc inside the container
+# The ports Loki will use for http/grpc inside the container
 loki_server_http_listen_port: "3100"
 loki_server_grpc_listen_port: "9096"
 
@@ -111,7 +111,7 @@ loki_common_path_prefix: "/loki"
 loki_storage_chunks_directory: "{{ loki_common_path_prefix }}/chunks"
 loki_storage_rules_directory: "{{ loki_common_path_prefix }}/rules"
 
-# Controls whether loki will send anonymous, but uniquely-identifiable usage and configuration
+# Controls whether Loki will send anonymous, but uniquely-identifiable usage and configuration
 # analytics to Grafana Labs
 loki_analytics_reporting_enabled: false
 
@@ -137,7 +137,7 @@ loki_configuration_extension: "{{ loki_configuration_extension_yaml | from_yaml 
 # You most likely don't need to touch this variable. Instead, see `loki_configuration_yaml`.
 loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_configuration_extension, recursive=True) }}"
 
-# Additional environment variables to pass to the loki container.
+# Additional environment variables to pass to the Loki container.
 # You can use this to further influence the default configuration.
 #
 # Example:
