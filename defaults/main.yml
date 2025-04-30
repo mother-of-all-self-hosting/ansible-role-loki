@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2024 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
 # SPDX-FileCopyrightText: 2024 Tiz
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -30,8 +34,10 @@ loki_systemd_required_services_list_custom: []
 loki_version: 2.9.4
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
-loki_container_image_registry_prefix: docker.io/
 loki_container_image_tag: "{{ loki_version }}"
+loki_container_image_registry_prefix: "{{ loki_container_image_registry_prefix_upstream }}"
+loki_container_image_registry_prefix_upstream: "{{ loki_container_image_registry_prefix_upstream_default }}"
+loki_container_image_registry_prefix_upstream_default: docker.io/
 loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}"
 
 loki_container_network: '{{ loki_identifier }}'
