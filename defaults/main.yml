@@ -12,27 +12,21 @@
 # Project source code URL: https://github.com/grafana/loki
 
 loki_enabled: true
+
 loki_identifier: loki
-
-loki_hostname: ''
-loki_path_prefix: '/'
-
-loki_uid: ''
-loki_gid: ''
-
 loki_base_path: "/{{ loki_identifier }}"
 loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
 loki_env_path: "{{ loki_base_path }}/env"
 
-# List of systemd services that the Loki systemd service depends on
-loki_systemd_required_services_list: "{{ loki_systemd_required_services_list_default + loki_systemd_required_services_list_auto + loki_systemd_required_services_list_custom }}"
-loki_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
-loki_systemd_required_services_list_auto: []
-loki_systemd_required_services_list_custom: []
-
 # renovate: datasource=docker depName=grafana/loki versioning=semver
 loki_version: 2.9.4
+
+loki_uid: ''
+loki_gid: ''
+
+loki_hostname: ''
+loki_path_prefix: '/'
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
 loki_container_image_tag: "{{ loki_version }}"
@@ -41,22 +35,22 @@ loki_container_image_registry_prefix_upstream: "{{ loki_container_image_registry
 loki_container_image_registry_prefix_upstream_default: docker.io/
 loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}"
 
+# Controls whether the Loki container exposes its HTTP port.
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
+loki_container_http_host_bind_port: ""
+
 loki_container_network: '{{ loki_identifier }}'
+
+# The ports Loki will use for http/grpc inside the container
+loki_server_http_listen_port: "3100"
+loki_server_grpc_listen_port: "9096"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
 loki_container_additional_networks: "{{ loki_container_additional_networks_auto + loki_container_additional_networks_custom }}"
 loki_container_additional_networks_auto: []
 loki_container_additional_networks_custom: []
-
-# Controls whether the Loki container exposes its HTTP port.
-#
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
-loki_container_http_host_bind_port: ""
-
-# The ports Loki will use for http/grpc inside the container
-loki_server_http_listen_port: "3100"
-loki_server_grpc_listen_port: "9096"
 
 # loki_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
 # See `../templates/labels.j2` for details.
@@ -77,15 +71,6 @@ loki_container_labels_middleware_basic_auth_enabled: "{{ loki_container_labels_t
 # See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
 loki_container_labels_middleware_basic_auth_users: ''
 
-# loki_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
-# See `../templates/labels.j2` for details.
-#
-# Example:
-# loki_container_labels_additional_labels: |
-#   my.label=1
-#   another.label="here"
-loki_container_labels_additional_labels: ''
-
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `loki_container_labels_traefik_additional_response_headers_custom`
 loki_container_labels_traefik_additional_request_headers: "{{ loki_container_labels_traefik_additional_request_headers_auto | combine(loki_container_labels_traefik_additional_request_headers_custom) }}"
@@ -105,6 +90,21 @@ loki_container_labels_traefik_additional_response_headers_auto: |
     | combine ({'Strict-Transport-Security': loki_http_header_strict_transport_security} if loki_http_header_strict_transport_security and loki_container_labels_traefik_tls else {})
   }}
 loki_container_labels_traefik_additional_response_headers_custom: {}
+
+# loki_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# loki_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+loki_container_labels_additional_labels: ''
+
+# List of systemd services that the Loki systemd service depends on
+loki_systemd_required_services_list: "{{ loki_systemd_required_services_list_default + loki_systemd_required_services_list_auto + loki_systemd_required_services_list_custom }}"
+loki_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+loki_systemd_required_services_list_auto: []
+loki_systemd_required_services_list_custom: []
 
 # Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
 #
