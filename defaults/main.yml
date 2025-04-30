@@ -28,7 +28,11 @@ loki_version: 2.9.4
 loki_uid: ''
 loki_gid: ''
 
+# The hostname at which Loki is served.
 loki_hostname: ''
+
+# The path at which Loki is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/loki`).
 loki_path_prefix: '/'
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
@@ -43,6 +47,7 @@ loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}
 # Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
 loki_container_http_host_bind_port: ""
 
+# The base container network. It will be auto-created by this role if it doesn't exist already.
 loki_container_network: '{{ loki_identifier }}'
 
 # The ports Loki will use for http/grpc inside the container
@@ -51,6 +56,7 @@ loki_server_grpc_listen_port: "9096"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
 loki_container_additional_networks: "{{ loki_container_additional_networks_auto + loki_container_additional_networks_custom }}"
 loki_container_additional_networks_auto: []
 loki_container_additional_networks_custom: []
