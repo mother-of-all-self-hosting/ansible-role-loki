@@ -18,6 +18,9 @@ loki_base_path: "/{{ loki_identifier }}"
 loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
 loki_env_path: "{{ loki_base_path }}/env"
+loki_common_path_prefix: "{{ loki_base_path }}"
+loki_storage_chunks_directory: "{{ loki_base_path }}/chunks" # Storage locations in container
+loki_storage_rules_directory: "{{ loki_base_path }}/rules" # Storage locations in container
 
 # renovate: datasource=docker depName=grafana/loki versioning=semver
 loki_version: 2.9.4
@@ -111,11 +114,6 @@ loki_systemd_required_services_list_custom: []
 # Despite the confusing name, this has nothing to do with authentication.
 # If you're exposing Loki publicly, consider setting up Basic Authentication for it (e.g. `loki_container_labels_middleware_basic_auth_*`).
 loki_auth_enabled: true
-
-# Storage locations in container
-loki_common_path_prefix: "/loki"
-loki_storage_chunks_directory: "{{ loki_common_path_prefix }}/chunks"
-loki_storage_rules_directory: "{{ loki_common_path_prefix }}/rules"
 
 # Controls whether Loki will send anonymous, but uniquely-identifiable usage and configuration
 # analytics to Grafana Labs
