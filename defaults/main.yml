@@ -26,8 +26,9 @@ loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
 loki_env_path: "{{ loki_base_path }}/env"
 
+# List of systemd services that the Loki systemd service depends on
 loki_systemd_required_services_list: "{{ loki_systemd_required_services_list_default + loki_systemd_required_services_list_auto + loki_systemd_required_services_list_custom }}"
-loki_systemd_required_services_list_default: ['docker.service']
+loki_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 loki_systemd_required_services_list_auto: []
 loki_systemd_required_services_list_custom: []
 
