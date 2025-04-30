@@ -99,7 +99,6 @@ loki_container_labels_traefik_additional_response_headers_auto: |
   {{
     {}
     | combine ({'X-XSS-Protection': loki_http_header_xss_protection} if loki_http_header_xss_protection else {})
-    | combine ({'X-Frame-Options': loki_http_header_frame_options} if loki_http_header_frame_options else {})
     | combine ({'X-Content-Type-Options': loki_http_header_content_type_options} if loki_http_header_content_type_options else {})
     | combine ({'Content-Security-Policy': loki_http_header_content_security_policy} if loki_http_header_content_security_policy else {})
     | combine ({'Permission-Policy': loki_http_header_content_permission_policy} if loki_http_header_content_permission_policy else {})
