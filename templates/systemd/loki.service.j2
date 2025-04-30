@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
 [Unit]
-Description=loki time-series database ({{ loki_identifier }})
+Description=Loki time-series database ({{ loki_identifier }})
 {% for service in loki_systemd_required_services_list %}
 Requires={{ service }}
 After={{ service }}
