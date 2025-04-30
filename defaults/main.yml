@@ -31,6 +31,7 @@ loki_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_do
 loki_systemd_required_services_list_auto: []
 loki_systemd_required_services_list_custom: []
 
+# renovate: datasource=docker depName=grafana/loki versioning=semver
 loki_version: 2.9.4
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
