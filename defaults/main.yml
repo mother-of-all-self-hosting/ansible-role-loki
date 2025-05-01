@@ -17,7 +17,6 @@ loki_identifier: loki
 loki_base_path: "/{{ loki_identifier }}"
 loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
-loki_env_path: "{{ loki_base_path }}/env"
 loki_common_path_prefix: "{{ loki_base_path }}"
 loki_storage_chunks_directory: "{{ loki_base_path }}/chunks" # Storage locations in container
 loki_storage_rules_directory: "{{ loki_base_path }}/rules" # Storage locations in container

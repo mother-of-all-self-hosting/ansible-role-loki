@@ -34,7 +34,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% if loki_container_http_host_bind_port %}
       -p {{ loki_container_http_host_bind_port }}:{{ loki_server_http_listen_port }} \
       {% endif %}
-      --env-file={{ loki_env_path }}/env \
+      --env-file={{ loki_base_path }}/env \
       --label-file={{ loki_base_path }}/labels \
       --mount type=bind,src={{ loki_data_path }},dst=/loki \
       --mount type=bind,src={{ loki_config_path }},dst=/etc/loki,ro \
