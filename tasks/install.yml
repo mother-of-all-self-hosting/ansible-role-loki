@@ -5,7 +5,7 @@
 
 ---
 
-- name: Ensure Loki path exists
+- name: Ensure Loki paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
@@ -36,17 +36,17 @@
     - labels
     - env
 
-- name: Ensure Loki container network is created
-  community.docker.docker_network:
-    name: "{{ loki_container_network }}"
-    driver: bridge
-
 - name: Ensure Loki container image is pulled
   community.docker.docker_image:
     name: "{{ loki_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
 
-- name: Ensure Loki.service installed
+- name: Ensure Loki container network is created
+  community.docker.docker_network:
+    name: "{{ loki_container_network }}"
+    driver: bridge
+
+- name: Ensure Loki systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/loki.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
