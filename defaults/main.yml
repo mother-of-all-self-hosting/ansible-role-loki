@@ -144,7 +144,7 @@ loki_http_header_content_permission_policy: "{{ 'interest-cohort=()' if loki_flo
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 loki_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if loki_hsts_preload_enabled else '' }}"
 
-# Controls whether to loki a "Permissions-Policy interest-cohort=();" header along with all responses
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
 #
 # Learn more about what it is here:
 # - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
