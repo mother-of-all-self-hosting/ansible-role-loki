@@ -214,9 +214,9 @@ loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_confi
 # You can use this to further influence the default configuration.
 #
 # Example:
-# loki_environment_variables_extension: |
+# loki_environment_variables_additional_variables: |
 #   LOKI_SOMETHING=true
-loki_environment_variables_extension: ''
+loki_environment_variables_additional_variables: ''
 
 # loki_metrics_dashboard_urls contains a list of URLs with Grafana dashboard definitions.
 # This role doesn't make use of this variable, but you can hook this into other roles.
