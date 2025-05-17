@@ -13,24 +13,6 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'loki_environment_variables_extension', 'new': 'loki_environment_variables_additional_variables'}
-
-- name: Fail if required Loki settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and vars[item.name] == ''"
-  with_items:
-    - {'name': 'loki_container_labels_traefik_hostname', when: "{{ loki_container_labels_traefik_enabled }}"}
-    - {'name': 'loki_container_labels_middleware_basic_auth_users', when: "{{ loki_container_labels_middleware_basic_auth_enabled }}"}
-
-- name: (Deprecation) Catch and report renamed Loki settings
-  ansible.builtin.fail:
-    msg: >-
-      Your configuration contains a variable, which now has a different name.
-      Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
-  with_items:
     - {'old': 'loki_basic_auth_enabled', 'new': 'loki_container_labels_middleware_basic_auth_enabled'}
     - {'old': 'loki_basic_auth_username', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
     - {'old': 'loki_basic_auth_password', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
@@ -41,3 +23,13 @@
     - {'old': 'loki_container_storage_rules_directory', 'new': 'loki_storage_rules_directory'}
     - {'old': 'loki_container_http_port', 'new': 'loki_server_http_listen_port'}
     - {'old': 'loki_container_grpc_port', 'new': 'loki_server_grpc_listen_port'}
+    - {'old': 'loki_environment_variables_extension', 'new': 'loki_environment_variables_additional_variables'}
+
+- name: Fail if required Loki settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item.name }}`).
+  when: "item.when | bool and vars[item.name] == ''"
+  with_items:
+    - {'name': 'loki_container_labels_traefik_hostname', when: "{{ loki_container_labels_traefik_enabled }}"}
+    - {'name': 'loki_container_labels_middleware_basic_auth_users', when: "{{ loki_container_labels_middleware_basic_auth_enabled }}"}
