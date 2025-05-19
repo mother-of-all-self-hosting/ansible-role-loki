@@ -17,7 +17,7 @@
     - "{{ loki_config_path }}"
     - "{{ loki_data_path }}"
 
-- name: Ensure Loki configuration installed
+- name: Ensure Loki configuration file installed
   ansible.builtin.copy:
     content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ loki_config_path }}/local-config.yaml"
