@@ -4,12 +4,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure Loki paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
   with_items:
@@ -21,7 +20,7 @@
   ansible.builtin.copy:
     content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
     dest: "{{ loki_config_path }}/local-config.yaml"
-    mode: 0644
+    mode: "0644"
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
 
@@ -31,7 +30,7 @@
     dest: "{{ loki_base_path }}/{{ item }}"
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
-    mode: 0640
+    mode: "0640"
   with_items:
     - labels
     - env
@@ -58,4 +57,4 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/loki.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
-    mode: 0644
+    mode: "0644"

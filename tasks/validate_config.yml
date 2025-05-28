@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed settings
   ansible.builtin.fail:
     msg: >-
@@ -13,17 +12,17 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "item.old in vars"
   with_items:
-    - {'old': 'loki_basic_auth_enabled', 'new': 'loki_container_labels_middleware_basic_auth_enabled'}
-    - {'old': 'loki_basic_auth_username', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
-    - {'old': 'loki_basic_auth_password', 'new': '<superseded by loki_container_labels_middleware_basic_auth_users>'}
-    - {'old': 'loki_reporting_enabled', 'new': 'loki_analytics_reporting_enabled'}
-    - {'old': 'loki_container_common_path_prefix', 'new': 'loki_common_path_prefix'}
-    - {'old': 'loki_env_path', 'new': '<removed>'}
-    - {'old': 'loki_container_storage_chunks_directory', 'new': 'loki_storage_chunks_directory'}
-    - {'old': 'loki_container_storage_rules_directory', 'new': 'loki_storage_rules_directory'}
-    - {'old': 'loki_container_http_port', 'new': 'loki_server_http_listen_port'}
-    - {'old': 'loki_container_grpc_port', 'new': 'loki_server_grpc_listen_port'}
-    - {'old': 'loki_environment_variables_extension', 'new': 'loki_environment_variables_additional_variables'}
+    - { "old": "loki_basic_auth_enabled", "new": "loki_container_labels_middleware_basic_auth_enabled" }
+    - { "old": "loki_basic_auth_username", "new": "<superseded by loki_container_labels_middleware_basic_auth_users>" }
+    - { "old": "loki_basic_auth_password", "new": "<superseded by loki_container_labels_middleware_basic_auth_users>" }
+    - { "old": "loki_reporting_enabled", "new": "loki_analytics_reporting_enabled" }
+    - { "old": "loki_container_common_path_prefix", "new": "loki_common_path_prefix" }
+    - { "old": "loki_env_path", "new": "<removed>" }
+    - { "old": "loki_container_storage_chunks_directory", "new": "loki_storage_chunks_directory" }
+    - { "old": "loki_container_storage_rules_directory", "new": "loki_storage_rules_directory" }
+    - { "old": "loki_container_http_port", "new": "loki_server_http_listen_port" }
+    - { "old": "loki_container_grpc_port", "new": "loki_server_grpc_listen_port" }
+    - { "old": "loki_environment_variables_extension", "new": "loki_environment_variables_additional_variables" }
 
 - name: Fail if required Loki settings not defined
   ansible.builtin.fail:
@@ -31,5 +30,5 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and vars[item.name] == ''"
   with_items:
-    - {'name': 'loki_container_labels_traefik_hostname', when: "{{ loki_container_labels_traefik_enabled }}"}
-    - {'name': 'loki_container_labels_middleware_basic_auth_users', when: "{{ loki_container_labels_middleware_basic_auth_enabled }}"}
+    - { "name": "loki_container_labels_traefik_hostname", when: "{{ loki_container_labels_traefik_enabled }}" }
+    - { "name": "loki_container_labels_middleware_basic_auth_users", when: "{{ loki_container_labels_middleware_basic_auth_enabled }}" }

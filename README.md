@@ -7,7 +7,7 @@ SPDX-FileCopyrightText: 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Loki Ansible Role
+# Loki Ansible role
 
 This is an [Ansible](https://www.ansible.com/) role which installs [Loki](https://grafana.com/oss/loki/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
@@ -19,3 +19,9 @@ This role *implicitly* depends on:
 Check [defaults/main.yml](defaults/main.yml) for the full list of supported options.
 
 💡 See this [document](docs/configuring-loki.md) for details about setting up the service with this role.
+
+## Development
+
+You can optionally install [pre-commit](https://pre-commit.com/) so that simple mistakes are checked and noticed before changes are pushed to a remote branch. See [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) for which hooks are to be executed.
+
+See [this section](https://pre-commit.com/#usage) on the official documentation for usage.

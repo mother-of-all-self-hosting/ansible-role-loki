@@ -78,7 +78,6 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 When exposing metrics publicly, you might also probably want to set up [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) **or anyone would be able to read your logs or push new ones**.
 
-
 To set up the authentication, add the following configuration to your `vars.yml` file.
 
 ```yaml
@@ -101,7 +100,7 @@ Take a look at:
 
 ## Usage
 
-Refer to the [official documentation](https://grafana.com/docs/loki/latest/reference/api/#post-lokiapiv1push) for details about how to send logs throught Loki's API without an agent.
+Refer to the [official documentation](https://grafana.com/docs/loki/latest/reference/api/#post-lokiapiv1push) for details about how to send logs through Loki's API without an agent.
 
 ## Troubleshooting
 
