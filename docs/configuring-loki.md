@@ -74,9 +74,9 @@ Make sure to replace `example.com` with your own value.
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-#### Set up Basic Authentication
+#### Set up HTTP Basic authentication
 
-When exposing metrics publicly, you might also probably want to set up [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) **or anyone would be able to read your logs or push new ones**.
+When exposing metrics publicly, you might also probably want to set up [HTTP Basic authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) **or anyone would be able to read your logs or push new ones**.
 
 To set up the authentication, add the following configuration to your `vars.yml` file.
 
