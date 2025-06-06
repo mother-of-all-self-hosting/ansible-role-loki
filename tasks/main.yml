@@ -5,6 +5,7 @@
 
 ---
 - name: Perform Loki installation tasks
+  when: loki_enabled | bool
   tags:
     - setup-all
     - setup-loki
@@ -12,17 +13,15 @@
     - install-loki
   block:
     - name: Validate Loki configuration
-      when: loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install Loki
-      when: loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform Loki uninstallation tasks
+  when: not loki_enabled | bool
   tags:
     - setup-all
     - setup-loki
   block:
     - name: Uninstall Loki
-      when: not loki_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
