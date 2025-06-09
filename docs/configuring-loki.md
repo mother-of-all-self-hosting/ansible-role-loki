@@ -30,7 +30,7 @@ See the project's [documentation](https://grafana.com/docs/loki/latest/) to lear
 
 As Loki is just a log storage system, you would need at least two other components in order to make use of it:
 
-- an agent such as [Promtail](https://grafana.com/oss/promtail/) to send logs to Loki
+- an agent such as [Promtail](https://grafana.com/docs/loki/latest/send-data/promtail/) to send logs to Loki
 - a system such as [Grafana](https://grafana.com/) to read the logs out of Loki and display them nicely
 
 If you are looking for Ansible roles for them, you can check out [ansible-role-promtail](https://github.com/mother-of-all-self-hosting/ansible-role-promtail) and [ansible-role-grafana](https://github.com/mother-of-all-self-hosting/ansible-role-grafana), both of which are maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
