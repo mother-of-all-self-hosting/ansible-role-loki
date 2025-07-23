@@ -19,7 +19,7 @@ loki_config_path: "{{ loki_base_path }}/config"
 loki_data_path: "{{ loki_base_path }}/data"
 
 # renovate: datasource=docker depName=grafana/loki versioning=semver
-loki_version: 3.5.2
+loki_version: 3.5.3
 
 loki_uid: ''
 loki_gid: ''
