@@ -10,7 +10,7 @@
     msg: >-
       Your configuration contains a variable, which now has a different name.
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
-  when: "item.old in vars"
+  when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "loki_basic_auth_enabled", "new": "loki_container_labels_middleware_basic_auth_enabled" }
     - { "old": "loki_basic_auth_username", "new": "<superseded by loki_container_labels_middleware_basic_auth_users>" }
@@ -28,7 +28,7 @@
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and vars[item.name] == ''"
+  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
     - { "name": "loki_container_labels_traefik_hostname", when: "{{ loki_container_labels_traefik_enabled }}" }
     - { "name": "loki_container_labels_middleware_basic_auth_users", when: "{{ loki_container_labels_middleware_basic_auth_enabled }}" }
