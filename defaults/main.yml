@@ -86,7 +86,7 @@ loki_container_labels_middleware_basic_auth_enabled: "{{ loki_container_labels_t
 loki_container_labels_middleware_basic_auth_users: ''
 
 # Controls which additional headers to attach to all HTTP requests.
-# To add your own custom request headers, use `loki_container_labels_traefik_additional_response_headers_custom`
+# To add your own custom request headers, use `loki_container_labels_traefik_additional_request_headers_custom`
 loki_container_labels_traefik_additional_request_headers: "{{ loki_container_labels_traefik_additional_request_headers_auto | combine(loki_container_labels_traefik_additional_request_headers_custom) }}"
 loki_container_labels_traefik_additional_request_headers_auto: {}
 loki_container_labels_traefik_additional_request_headers_custom: {}
