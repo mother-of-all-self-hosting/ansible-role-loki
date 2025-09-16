@@ -23,6 +23,7 @@
     - { "old": "loki_container_http_port", "new": "loki_server_http_listen_port" }
     - { "old": "loki_container_grpc_port", "new": "loki_server_grpc_listen_port" }
     - { "old": "loki_environment_variables_extension", "new": "loki_environment_variables_additional_variables" }
+    - { "old": "loki_http_header_content_permission_policy", "new": "loki_http_header_permissions_policy" }
 
 - name: Fail if required Loki settings not defined
   ansible.builtin.fail:
