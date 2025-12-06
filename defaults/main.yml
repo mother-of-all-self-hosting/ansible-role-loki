@@ -84,7 +84,7 @@ loki_container_labels_traefik_tls: "{{ loki_container_labels_traefik_entrypoints
 loki_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 # For security reasons, we default this to true (if exposing publicly) and ask people to explicitly disable it.
 loki_container_labels_middleware_basic_auth_enabled: "{{ loki_container_labels_traefik_enabled }}"
-# See: https://doc.traefik.io/traefik/middlewares/http/basicauth/#users
+# See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
 loki_container_labels_middleware_basic_auth_users: ''
 
 # Controls which additional headers to attach to all HTTP requests.
