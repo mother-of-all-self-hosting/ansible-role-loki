@@ -178,6 +178,9 @@ loki_systemd_wanted_services_list_default: []
 loki_systemd_wanted_services_list_auto: []
 loki_systemd_wanted_services_list_custom: []
 
+# Specify the timezone
+loki_environment_variables_tz: UTC
+
 # Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
 #
 # Despite the confusing name, this has nothing to do with authentication.
