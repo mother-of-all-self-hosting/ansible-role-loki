@@ -109,12 +109,15 @@ loki_container_labels_traefik_additional_response_headers_custom: {}
 
 # loki_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
 # See `../templates/labels.j2` for details.
+# To add your own custom labels, use `loki_container_labels_additional_labels_custom`
 #
 # Example:
-# loki_container_labels_additional_labels: |
+# loki_container_labels_additional_labels_custom: |
 #   my.label=1
 #   another.label="here"
-loki_container_labels_additional_labels: ''
+loki_container_labels_additional_labels: "{{ loki_container_labels_additional_labels_auto | combine(loki_container_labels_additional_labels_custom) }}"
+loki_container_labels_additional_labels_auto: {}
+loki_container_labels_additional_labels_custom: {}
 
 # A list of extra arguments to pass to the container (`docker run` command)
 loki_container_extra_arguments: "{{ loki_container_extra_arguments_auto + loki_container_extra_arguments_custom }}"
