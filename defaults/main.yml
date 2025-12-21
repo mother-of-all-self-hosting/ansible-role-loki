@@ -29,7 +29,7 @@ loki_hostname: ""
 
 loki_scheme: http
 
-# The path at which Loki is exposed.
+# The path at which Loki is served.
 # This value must either be `/` or not end with a slash (e.g. `/loki`).
 loki_path_prefix: '/'
 
