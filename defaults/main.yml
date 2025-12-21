@@ -119,7 +119,7 @@ loki_container_labels_additional_labels: "{{ loki_container_labels_additional_la
 loki_container_labels_additional_labels_auto: {}
 loki_container_labels_additional_labels_custom: {}
 
-# A list of extra arguments to pass to the container (`docker run` command)
+# A list of extra arguments to pass to the container (`docker create` command)
 loki_container_extra_arguments: "{{ loki_container_extra_arguments_auto + loki_container_extra_arguments_custom }}"
 loki_container_extra_arguments_auto: []
 loki_container_extra_arguments_custom: []
