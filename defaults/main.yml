@@ -183,9 +183,6 @@ loki_systemd_wanted_services_list_default: []
 loki_systemd_wanted_services_list_auto: []
 loki_systemd_wanted_services_list_custom: []
 
-# Specify the timezone
-loki_environment_variables_tz: UTC
-
 # Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
 #
 # Despite the confusing name, this has nothing to do with authentication.
@@ -222,6 +219,9 @@ loki_configuration_extension: "{{ loki_configuration_extension_yaml | from_yaml 
 # Holds the final borgmatic configuration (a combination of the default and its extension).
 # You most likely don't need to touch this variable. Instead, see `loki_configuration_yaml`.
 loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_configuration_extension, recursive=True) }}"
+
+# Specify the timezone
+loki_environment_variables_tz: UTC
 
 # Additional environment variables to pass to the Loki container.
 # You can use this to further influence the default configuration.
