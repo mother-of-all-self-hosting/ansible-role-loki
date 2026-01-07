@@ -113,11 +113,11 @@ loki_container_labels_traefik_additional_response_headers_custom: {}
 #
 # Example:
 # loki_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-loki_container_labels_additional_labels: "{{ loki_container_labels_additional_labels_auto | combine(loki_container_labels_additional_labels_custom) }}"
-loki_container_labels_additional_labels_auto: {}
-loki_container_labels_additional_labels_custom: {}
+#   - my.label=1
+#   - another.label="here"
+loki_container_labels_additional_labels: "{{ loki_container_labels_additional_labels_auto + loki_container_labels_additional_labels_custom }}"
+loki_container_labels_additional_labels_auto: []
+loki_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
 loki_container_extra_arguments: "{{ loki_container_extra_arguments_auto + loki_container_extra_arguments_custom }}"

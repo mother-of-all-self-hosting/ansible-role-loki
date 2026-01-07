@@ -41,4 +41,6 @@ traefik.http.services.{{ loki_identifier }}.loadbalancer.server.port={{ loki_ser
 
 {% endif %}
 
-{{ loki_container_labels_additional_labels }}
+{% for arg in loki_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
