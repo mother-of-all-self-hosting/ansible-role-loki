@@ -112,7 +112,7 @@ loki_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `loki_container_labels_additional_labels_custom`
 #
 # Example:
-# loki_container_labels_additional_labels_custom: |
+# loki_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
 loki_container_labels_additional_labels: "{{ loki_container_labels_additional_labels_auto + loki_container_labels_additional_labels_custom }}"
