@@ -16,14 +16,6 @@
     - "{{ loki_config_path }}"
     - "{{ loki_data_path }}"
 
-- name: Ensure Loki configuration file installed
-  ansible.builtin.copy:
-    content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
-    dest: "{{ loki_config_path }}/local-config.yaml"
-    mode: "0644"
-    owner: "{{ loki_uid }}"
-    group: "{{ loki_gid }}"
-
 - name: Ensure Loki support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
@@ -34,6 +26,14 @@
   with_items:
     - labels
     - env
+
+- name: Ensure Loki configuration file installed
+  ansible.builtin.copy:
+    content: "{{ loki_configuration | to_nice_yaml(indent=2, width=999999) }}"
+    dest: "{{ loki_config_path }}/local-config.yaml"
+    mode: "0644"
+    owner: "{{ loki_uid }}"
+    group: "{{ loki_gid }}"
 
 - name: Ensure Loki container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
