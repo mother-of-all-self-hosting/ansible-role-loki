@@ -28,9 +28,9 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: "{{ loki_base_path }}/{{ item }}"
+    mode: "0640"
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
-    mode: "0640"
   with_items:
     - labels
     - env
