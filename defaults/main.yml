@@ -46,7 +46,7 @@ loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}
 loki_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-loki_container_network: '{{ loki_identifier }}'
+loki_container_network: "{{ loki_identifier }}"
 
 # The ports Loki will use for http/grpc inside the container
 loki_server_http_listen_port: "3100"
