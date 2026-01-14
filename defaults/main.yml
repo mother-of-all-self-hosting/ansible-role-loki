@@ -24,10 +24,11 @@ loki_version: 3.6.3
 loki_uid: ""
 loki_gid: ""
 
+# The scheme used for serving Loki.
+loki_scheme: http
+
 # The hostname at which Loki is served.
 loki_hostname: ""
-
-loki_scheme: http
 
 # The path at which Loki is served.
 # This value must either be `/` or not end with a slash (e.g. `/loki`).
@@ -42,7 +43,7 @@ loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}
 
 # Controls whether the Loki container exposes its HTTP port.
 #
-# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3100"), or empty string to not expose.
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:2586"), or empty string to not expose.
 loki_container_http_host_bind_port: ""
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
