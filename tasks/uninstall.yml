@@ -30,6 +30,7 @@
       community.docker.docker_network:
         name: "{{ loki_container_network }}"
         state: absent
+      register: loki_network_deletion_result
 
     - name: Ensure Loki container network does not exist via ansible.builtin.command
       when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -37,8 +38,8 @@
         cmd: >-
           {{ devture_systemd_docker_base_host_command_docker }} network rm
           {{ loki_container_network }}
-      register: network_deletion_result
-      changed_when: loki_container_network in network_deletion_result.stdout
+      register: loki_network_deletion_result
+      changed_when: loki_container_network in loki_network_deletion_result.stdout
 
     - name: Ensure Loki path does not exist
       ansible.builtin.file:
