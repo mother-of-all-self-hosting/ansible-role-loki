@@ -26,6 +26,7 @@
   with_items:
     - labels
     - env
+  register: yacy_support_files_result
 
 - name: Ensure Loki configuration file installed
   ansible.builtin.copy:
@@ -34,6 +35,7 @@
     mode: "0644"
     owner: "{{ loki_uid }}"
     group: "{{ loki_gid }}"
+  register: yacy_config_file_result
 
 - name: Ensure Loki container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
@@ -42,20 +44,20 @@
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
     force_source: "{{ loki_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
     force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else loki_container_image_force_pull }}"
-  register: result
+  register: yacy_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
+  until: yacy_container_image_pull_result is not failed
 
 - name: Ensure Loki container image is pulled via ansible.builtin.command
   when: devture_systemd_docker_base_container_image_pull_method == 'command'
   ansible.builtin.command:
     cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ loki_container_image }}"
-  register: result
+  register: yacy_container_image_pull_result
   retries: "{{ devture_playbook_help_container_retries_count }}"
   delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: result is not failed
-  changed_when: "'Downloaded newer image' in result.stdout"
+  until: yacy_container_image_pull_result is not failed
+  changed_when: "'Downloaded newer image' in yacy_container_image_pull_result.stdout"
 
 - name: Ensure Loki container network is created via community.docker.docker_network
   when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
@@ -83,3 +85,14 @@
     src: "{{ role_path }}/templates/systemd/loki.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ loki_identifier }}.service"
     mode: "0644"
+  register: yacy_systemd_service_result
+
+- name: Determine whether Loki needs a restart
+  ansible.builtin.set_fact:
+    yacy_restart_necessary: >-
+      {{
+        yacy_support_files_result.changed | default(false)
+        or yacy_config_file_result.changed | default(false)
+        or yacy_systemd_service_result.changed | default(false)
+        or yacy_container_image_pull_result.changed | default(false)
+      }}

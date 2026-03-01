@@ -255,6 +255,11 @@ loki_configuration_extension: "{{ loki_configuration_extension_yaml | from_yaml 
 # You most likely don't need to touch this variable. Instead, see `loki_configuration_yaml`.
 loki_configuration: "{{ loki_configuration_yaml | from_yaml | combine(loki_configuration_extension, recursive=True) }}"
 
+# loki_metrics_dashboard_urls contains a list of URLs with Grafana dashboard definitions.
+# This role doesn't make use of this variable, but you can hook this into other roles.
+loki_metrics_dashboard_urls:
+  - "https://grafana.com/api/dashboards/13407/revisions/1/download"
+
 # Specify the timezone
 loki_environment_variables_tz: UTC
 
@@ -266,7 +271,12 @@ loki_environment_variables_tz: UTC
 #   LOKI_SOMETHING=true
 loki_environment_variables_additional_variables: ""
 
-# loki_metrics_dashboard_urls contains a list of URLs with Grafana dashboard definitions.
-# This role doesn't make use of this variable, but you can hook this into other roles.
-loki_metrics_dashboard_urls:
-  - "https://grafana.com/api/dashboards/13407/revisions/1/download"
+# loki_restart_necessary controls whether the Loki systemd
+# service will be restarted (when true) or merely started (when false) by the
+# systemd service manager role (when conditional restart is enabled).
+#
+# This value is automatically computed during installation based on whether
+# any configuration files, the systemd service file, or the container image changed.
+# The default of `false` means "no restart needed" — appropriate when the role's
+# installation tasks haven't run (e.g., due to --tags skipping them).
+loki_restart_necessary: false
