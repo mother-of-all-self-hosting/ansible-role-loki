@@ -39,7 +39,6 @@ loki_container_image_tag: "{{ loki_version }}"
 loki_container_image_registry_prefix: "{{ loki_container_image_registry_prefix_upstream }}"
 loki_container_image_registry_prefix_upstream: "{{ loki_container_image_registry_prefix_upstream_default }}"
 loki_container_image_registry_prefix_upstream_default: docker.io/
-loki_container_image_force_pull: "{{ loki_container_image.endswith(':latest') }}"
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
 loki_container_network: "{{ loki_identifier }}"

@@ -24,6 +24,7 @@
     - { "old": "loki_container_grpc_port", "new": "loki_server_grpc_listen_port" }
     - { "old": "loki_environment_variables_extension", "new": "loki_environment_variables_additional_variables" }
     - { "old": "loki_http_header_content_permission_policy", "new": "loki_http_header_permissions_policy" }
+    - { "old": "loki_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required Loki settings not defined
   ansible.builtin.fail:
