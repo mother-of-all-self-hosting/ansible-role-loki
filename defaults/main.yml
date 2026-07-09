@@ -32,7 +32,7 @@ loki_hostname: ""
 
 # The path at which Loki is served.
 # This value must either be `/` or not end with a slash (e.g. `/loki`).
-loki_path_prefix: '/'
+loki_path_prefix: /
 
 loki_container_image: "{{ loki_container_image_registry_prefix }}grafana/loki:{{ loki_container_image_tag }}"
 loki_container_image_tag: "{{ loki_version }}"
@@ -86,9 +86,9 @@ loki_container_labels_traefik_entrypoints: web-secure
 loki_container_labels_traefik_tls: "{{ loki_container_labels_traefik_entrypoints != 'web' }}"
 loki_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 # For security reasons, we default this to true (if exposing publicly) and ask people to explicitly disable it.
-loki_container_labels_middleware_basic_auth_enabled: "{{ loki_container_labels_traefik_enabled }}"
+loki_container_labels_traefik_middleware_basic_auth_enabled: "{{ loki_container_labels_traefik_enabled }}"
 # See: https://doc.traefik.io/traefik/reference/routing-configuration/http/middlewares/basicauth/
-loki_container_labels_middleware_basic_auth_users: ""
+loki_container_labels_traefik_middleware_basic_auth_users: ""
 
 # Controls which additional headers to attach to all HTTP requests.
 # To add your own custom request headers, use `loki_container_labels_traefik_additional_request_headers_custom`
@@ -220,7 +220,7 @@ loki_container_cleanup_command: |
 # Controls whether multi-tenancy is enabled. If it is, API requests must include an `X-Scope-OrgID` HTTP header to specify the tenant.
 #
 # Despite the confusing name, this has nothing to do with authentication.
-# If you're exposing Loki publicly, consider setting up HTTP Basic authentication for it (e.g. `loki_container_labels_middleware_basic_auth_*`).
+# If you're exposing Loki publicly, consider setting up HTTP Basic authentication for it (e.g. `loki_container_labels_traefik_middleware_basic_auth_*`).
 loki_auth_enabled: true
 
 # Storage locations in container

@@ -12,9 +12,9 @@
       Please change your configuration to rename the variable (`{{ item.old }}` -> `{{ item.new }}`).
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
-    - { "old": "loki_basic_auth_enabled", "new": "loki_container_labels_middleware_basic_auth_enabled" }
-    - { "old": "loki_basic_auth_username", "new": "<superseded by loki_container_labels_middleware_basic_auth_users>" }
-    - { "old": "loki_basic_auth_password", "new": "<superseded by loki_container_labels_middleware_basic_auth_users>" }
+    - { "old": "loki_basic_auth_enabled", "new": "loki_container_labels_traefik_middleware_basic_auth_enabled" }
+    - { "old": "loki_basic_auth_username", "new": "<superseded by loki_container_labels_traefik_middleware_basic_auth_users>" }
+    - { "old": "loki_basic_auth_password", "new": "<superseded by loki_container_labels_traefik_middleware_basic_auth_users>" }
     - { "old": "loki_reporting_enabled", "new": "loki_analytics_reporting_enabled" }
     - { "old": "loki_container_common_path_prefix", "new": "loki_common_path_prefix" }
     - { "old": "loki_env_path", "new": "<removed>" }
@@ -22,15 +22,21 @@
     - { "old": "loki_container_storage_rules_directory", "new": "loki_storage_rules_directory" }
     - { "old": "loki_container_http_port", "new": "loki_server_http_listen_port" }
     - { "old": "loki_container_grpc_port", "new": "loki_server_grpc_listen_port" }
+    - { "old": "loki_container_labels_middleware_basic_auth_enabled", "new": "loki_container_labels_traefik_middleware_basic_auth_enabled" }
+    - { "old": "loki_container_labels_middleware_basic_auth_users", "new": "loki_container_labels_traefik_middleware_basic_auth_users" }
     - { "old": "loki_environment_variables_extension", "new": "loki_environment_variables_additional_variables" }
     - { "old": "loki_http_header_content_permission_policy", "new": "loki_http_header_permissions_policy" }
     - { "old": "loki_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
-- name: Fail if required Loki settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
-  with_items:
-    - { "name": "loki_container_labels_traefik_hostname", when: "{{ loki_container_labels_traefik_enabled }}" }
-    - { "name": "loki_container_labels_middleware_basic_auth_users", when: "{{ loki_container_labels_middleware_basic_auth_enabled }}" }
+- name: Run if Traefik is enabled
+  when: loki_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for Loki are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      with_items:
+        - { "name": "loki_container_labels_traefik_hostname", when: true }
+        - { "name": "loki_container_labels_traefik_path_prefix", when: true }
+        - { "name": "loki_container_labels_traefik_middleware_basic_auth_users", when: "{{ loki_container_labels_traefik_middleware_basic_auth_enabled }}" }
