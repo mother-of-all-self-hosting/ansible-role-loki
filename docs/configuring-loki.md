@@ -81,9 +81,9 @@ When exposing metrics publicly, you might also probably want to set up [HTTP Bas
 To set up the authentication, add the following configuration to your `vars.yml` file.
 
 ```yaml
-loki_container_labels_metrics_middleware_basic_auth_enabled: true
+loki_container_labels_traefik_middleware_basic_auth_enabled: true
 
-loki_container_labels_metrics_middleware_basic_auth_users : 'USERNAME_HERE:HASHED_PASSWORD_HERE'
+loki_container_labels_traefik_middleware_basic_auth_users: 'USERNAME_HERE:HASHED_PASSWORD_HERE'
 ```
 
 Make sure to replace `USERNAME_HERE` and `HASHED_PASSWORD_HERE` with your own values.
