@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify Loki systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for Loki service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: loki.service
+      register: loki_service
+      until: loki_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert Loki service is active
+      ansible.builtin.assert:
+        that: loki_service.status.ActiveState == 'active'
+        fail_msg: "loki.service not active ({{ loki_service.status.ActiveState }})"
+        success_msg: "loki.service is active"
+
+    - name: Retrieve Loki service log for debugging
+      when: loki_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu loki.service
+      changed_when: false
+
+    - name: Wait for Loki HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:3100/ready"  # https://grafana.com/docs/loki/latest/reference/loki-http-api/#readiness-probe
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: loki_endpoint
+      until: loki_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert Loki HTTP endpoint responds
+      ansible.builtin.assert:
+        that: loki_endpoint.status in [200, 302]
+        fail_msg: "Loki did not respond as expected ({{ loki_endpoint.status | default('no response') }})"
+        success_msg: "Loki responded with {{ loki_endpoint.status }}"
+
+    - name: Show Loki systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "Loki systemd: {{ loki_service.status.ActiveState }}"
+          - "Loki HTTP: {{ loki_endpoint.status }}"
