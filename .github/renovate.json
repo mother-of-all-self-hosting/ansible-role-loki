@@ -5,7 +5,6 @@
     ":automergeAll",
     ":automergeBranch",
     ":semanticCommitsDisabled",
-    "docker:pinDigests",
     "helpers:pinGitHubActionDigests"
   ],
   "labels": [
