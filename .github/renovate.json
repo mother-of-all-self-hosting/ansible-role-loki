@@ -25,13 +25,14 @@
   },
   "packageRules": [
     {
-      "matchManagers": ["github-actions", "mise"],
+      "matchManagers": ["github-actions"],
       "commitBody": "[skip ci]",
       "schedule": ["* * 1-7 */6 *"],
-      "automergeSchedule": ["* * 1-14 */6 *"]
+      "automergeSchedule": ["* * 1-14 */6 *"],
+      "groupName": "GitHub Actions dependencies"
     },
     {
-      "matchManagers": ["pip_requirements", "pre-commit", "pyenv"],
+      "matchManagers": ["mise", "pip_requirements", "pre-commit", "pyenv"],
       "schedule": ["* * 1-7 */6 *"],
       "automergeSchedule": ["* * 1-14 */6 *"]
     }
