@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 # SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -31,6 +32,13 @@ provisioner:
         # Helper variables
         loki_debug_service_enabled: false
 
+        # The tenant, stream label and log line used for the log round-trip in
+        # verify.yml. The role's default configuration turns multi-tenancy on
+        # (`loki_auth_enabled`), so every read and write has to name a tenant.
+        loki_verify_tenant_id: molecule-loki-tenant
+        loki_verify_stream_label: molecule-loki-verify
+        loki_verify_log_line: molecule-loki-round-trip-marker
+
         # Variables for Loki
         loki_uid: 1000
         loki_gid: 1000
@@ -38,6 +46,26 @@ provisioner:
         loki_hostname: localhost
         loki_container_labels_traefik_enabled: false
         loki_container_http_host_bind_port: 3100
+
+        # The stock grafana/loki image ships its own
+        # /etc/loki/local-config.yaml and starts from it. A Loki that never
+        # received this role's configuration therefore still answers /ready,
+        # /metrics, buildinfo and even a log round-trip - it is a working
+        # single-binary Loki, just not this role's one.
+        #
+        # The value below is deliberately unlike both the fallback
+        # configuration (which uses 9095) and this role's own default (9096),
+        # so that verification fails loudly when the rendered
+        # local-config.yaml does not reach the running process. The port is
+        # only ever used inside the container, so no host port is involved.
+        loki_server_grpc_listen_port: 9196
+
+        # Proves that the configuration extension mechanism reaches the
+        # running process too, rather than only the top-level template.
+        # Loki defaults this limit to 500.
+        loki_configuration_extension_yaml: |
+          limits_config:
+            max_query_series: 4242
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles
