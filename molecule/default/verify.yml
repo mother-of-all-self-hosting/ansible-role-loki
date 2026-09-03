@@ -83,7 +83,7 @@
     # stay comparable if the variable ever starts carrying one. The comparison
     # is a prefix match, so that a build suffix appearing upstream does not
     # fail the scenario.
-    - name: Assert the running Loki is the version the role asks for
+    - name: Assert the running Loki is the version this role installs
       ansible.builtin.assert:
         that: >-
           loki_buildinfo.json.version.startswith(
