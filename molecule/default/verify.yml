@@ -84,10 +84,8 @@
           loki_buildinfo.json.version.startswith(
             loki_defaults.loki_version | string | regex_replace('^v', '')
           )
-        fail_msg: >-
-          Loki reports version {{ loki_buildinfo.json.version | default('none') }},
-          but the role asks for {{ loki_defaults.loki_version }}
-        success_msg: "Loki reports version {{ loki_buildinfo.json.version }}"
+        fail_msg: "Loki reports {{ loki_buildinfo.json.version | default('none') }}, expected {{ loki_defaults.loki_version }}"
+        success_msg: "Loki reports {{ loki_buildinfo.json.version }}"
 
     # The configuration the role rendered, read back out of the running process
     # rather than off disk. The stock grafana/loki image ships a fallback
