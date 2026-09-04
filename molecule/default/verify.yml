@@ -249,7 +249,7 @@
         fail_msg: "Loki did not serve the expected metrics"
         success_msg: "Loki serves metrics about the log line it received"
 
-    - name: Show Loki verification summary
+    - name: Show the Loki verification summary
       ansible.builtin.debug:
         msg:
           - "Loki systemd: {{ loki_service.status.ActiveState }}"
