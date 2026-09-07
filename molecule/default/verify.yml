@@ -73,17 +73,9 @@
         return_content: true
       register: loki_buildinfo
 
-    # `loki_version` carries no leading `v` (`3.7.6`) and neither does the
-    # version the API reports, but any `v` is stripped anyway so that the two
-    # stay comparable if the variable ever starts carrying one. The comparison
-    # is a prefix match, so that a build suffix appearing upstream does not
-    # fail the scenario.
     - name: Assert the running Loki is the version this role installs
       ansible.builtin.assert:
-        that: >-
-          loki_buildinfo.json.version.startswith(
-            loki_defaults.loki_version | string | regex_replace('^v', '')
-          )
+        that: loki_buildinfo.json.version == loki_defaults.loki_version
         fail_msg: "Loki reports {{ loki_buildinfo.json.version | default('none') }}, expected {{ loki_defaults.loki_version }}"
         success_msg: "Loki reports {{ loki_buildinfo.json.version }}"
 
