@@ -42,7 +42,7 @@
     - name: Retrieve the Loki systemd service log for debugging
       when: loki_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu loki.service
+        cmd: journalctl --no-pager --output=cat --unit=loki.service
       changed_when: false
 
     # A systemd unit reaching "active" only means that `docker start` has not
