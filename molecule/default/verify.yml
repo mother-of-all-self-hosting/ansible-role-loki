@@ -13,248 +13,248 @@
   tasks:
     - name: Verify that Loki works
       block:
-    # The role is not included in this playbook, so its defaults are not in
-    # scope. Reading defaults/main.yml directly ties the version assertion
-    # below.
-    - name: Load the role defaults
-      ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-        name: loki_defaults
+        # The role is not included in this playbook, so its defaults are not in
+        # scope. Reading defaults/main.yml directly ties the version assertion
+        # below.
+        - name: Load the role defaults
+          ansible.builtin.include_vars:
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: loki_defaults
 
-    - name: Wait for the Loki systemd service to become active (up to 180s)
-      ansible.builtin.systemd_service:
-        name: loki.service
-      register: loki_service
-      until: loki_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
-      # So that giving up is reported by the assertion below rather than as a
-      # wall of systemd unit properties.
-      failed_when: false
+        - name: Wait for the Loki systemd service to become active (up to 180s)
+          ansible.builtin.systemd_service:
+            name: loki.service
+          register: loki_service
+          until: loki_service.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    # `Restart=always` in the systemd unit means that even a container which crashes
-    # and gets restarted reads as active here, so this is a precondition rather than
-    # a result.
-    - name: Assert the Loki systemd service is active
-      ansible.builtin.assert:
-        that: loki_service.status.ActiveState == 'active'
-        fail_msg: "loki.service is not active ({{ loki_service.status.ActiveState }})"
-        success_msg: "loki.service is active"
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the Loki systemd service is active
+          ansible.builtin.assert:
+            that: loki_service.status.ActiveState == 'active'
+            fail_msg: "loki.service is not active ({{ loki_service.status.ActiveState }})"
+            success_msg: "loki.service is active"
 
-    - name: Retrieve the Loki systemd service log for debugging
-      when: loki_debug_service_enabled | bool
-      ansible.builtin.command:
-        cmd: journalctl --no-pager --output=cat --unit=loki.service
-      changed_when: false
+        - name: Retrieve the Loki systemd service log for debugging
+          when: loki_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=loki.service
+          changed_when: false
 
-    # A systemd unit reaching "active" only means that `docker start` has not
-    # exited yet. /ready is the first thing the Loki process itself has to
-    # answer, so it is where a container that never got going shows up.
-    #
-    # Loki answers 503 ("Ingester not ready: waiting for 15s after being
-    # ready") for a while after the HTTP server is already listening, so this
-    # has to be a retry ladder rather than a single request.
-    - name: Wait for Loki to report itself ready (up to 10m)
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/ready"
-        method: GET
-        status_code: [200, 503]
-        return_content: true
-      register: loki_ready
-      until: loki_ready.status == 200
-      retries: 120
-      delay: 5
+        # A systemd unit reaching "active" only means that `docker start` has not
+        # exited yet. /ready is the first thing the Loki process itself has to
+        # answer, so it is where a container that never got going shows up.
+        #
+        # Loki answers 503 ("Ingester not ready: waiting for 15s after being
+        # ready") for a while after the HTTP server is already listening, so this
+        # has to be a retry ladder rather than a single request.
+        - name: Wait for Loki to report itself ready (up to 10m)
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/ready"
+            method: GET
+            status_code: [200, 503]
+            return_content: true
+          register: loki_ready
+          until: loki_ready.status == 200
+          retries: 120
+          delay: 5
 
-    - name: Assert Loki reports itself ready
-      ansible.builtin.assert:
-        that: "'ready' in loki_ready.content"
-        fail_msg: "Loki is not ready: {{ loki_ready.content | default('no content') }}"
-        success_msg: "Loki reports itself ready"
+        - name: Assert Loki reports itself ready
+          ansible.builtin.assert:
+            that: "'ready' in loki_ready.content"
+            fail_msg: "Loki is not ready: {{ loki_ready.content | default('no content') }}"
+            success_msg: "Loki reports itself ready"
 
-    # Tying the running version to `loki_version` is what makes this scenario a
-    # real test of the version that Renovate bumps: a bump that produces an
-    # unusable image cannot pass here.
-    - name: Query the version of the running Loki
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/status/buildinfo"
-        method: GET
-        return_content: true
-      register: loki_buildinfo
+        # Tying the running version to `loki_version` is what makes this scenario a
+        # real test of the version that Renovate bumps: a bump that produces an
+        # unusable image cannot pass here.
+        - name: Query the version of the running Loki
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/status/buildinfo"
+            method: GET
+            return_content: true
+          register: loki_buildinfo
 
-    - name: Assert the running Loki is the version this role installs
-      ansible.builtin.assert:
-        that: loki_buildinfo.json.version == loki_defaults.loki_version
-        fail_msg: "Loki reports {{ loki_buildinfo.json.version | default('none') }}, expected {{ loki_defaults.loki_version }}"
-        success_msg: "Loki reports {{ loki_buildinfo.json.version }}"
+        - name: Assert the running Loki is the version this role installs
+          ansible.builtin.assert:
+            that: loki_buildinfo.json.version == loki_defaults.loki_version
+            fail_msg: "Loki reports {{ loki_buildinfo.json.version | default('none') }}, expected {{ loki_defaults.loki_version }}"
+            success_msg: "Loki reports {{ loki_buildinfo.json.version }}"
 
-    # The configuration the role rendered, read back out of the running process
-    # rather than off disk. The stock grafana/loki image ships a fallback
-    # /etc/loki/local-config.yaml and starts from it, so a Loki that never
-    # received this role's configuration satisfies every probe above. The
-    # values below are what distinguishes a configured Loki from a merely
-    # running one.
-    #
-    # /config is served as text/plain YAML, so it arrives as content rather
-    # than as json. Parsing it once keeps the assertions below cheap.
-    - name: Query the configuration the running Loki loaded
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/config"
-        method: GET
-        return_content: true
-      register: loki_config_response
+        # The configuration the role rendered, read back out of the running process
+        # rather than off disk. The stock grafana/loki image ships a fallback
+        # /etc/loki/local-config.yaml and starts from it, so a Loki that never
+        # received this role's configuration satisfies every probe above. The
+        # values below are what distinguishes a configured Loki from a merely
+        # running one.
+        #
+        # /config is served as text/plain YAML, so it arrives as content rather
+        # than as json. Parsing it once keeps the assertions below cheap.
+        - name: Query the configuration the running Loki loaded
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/config"
+            method: GET
+            return_content: true
+          register: loki_config_response
 
-    - name: Parse the configuration the running Loki loaded
-      ansible.builtin.set_fact:
-        loki_running_config: "{{ loki_config_response.content | from_yaml }}"
+        - name: Parse the configuration the running Loki loaded
+          ansible.builtin.set_fact:
+            loki_running_config: "{{ loki_config_response.content | from_yaml }}"
 
-    - name: Assert the role's configuration reached the running Loki
-      ansible.builtin.assert:
-        that:
-          # What this scenario tuned. The fallback configuration uses 9095 and
-          # the role's own default is 9096, so neither can stand in for it.
-          - loki_running_config.server.grpc_listen_port == (loki_server_grpc_listen_port | int)
-          # What the scenario contributed through the extension mechanism.
-          # Loki's own default for this limit is 500.
-          - loki_running_config.limits_config.max_query_series == 4242
-          # What the role's template contributes. The fallback configuration
-          # leaves analytics reporting on and dates its schema at 2020-10-24,
-          # so both of these are direct statements that the fallback is not
-          # what is loaded.
-          - not loki_running_config.analytics.reporting_enabled
-          - loki_running_config.schema_config.configs[0].from == '2025-05-01'
-        fail_msg: "The role's configuration did not reach Loki"
-        success_msg: "The role's configuration reached Loki"
+        - name: Assert the role's configuration reached the running Loki
+          ansible.builtin.assert:
+            that:
+              # What this scenario tuned. The fallback configuration uses 9095 and
+              # the role's own default is 9096, so neither can stand in for it.
+              - loki_running_config.server.grpc_listen_port == (loki_server_grpc_listen_port | int)
+              # What the scenario contributed through the extension mechanism.
+              # Loki's own default for this limit is 500.
+              - loki_running_config.limits_config.max_query_series == 4242
+              # What the role's template contributes. The fallback configuration
+              # leaves analytics reporting on and dates its schema at 2020-10-24,
+              # so both of these are direct statements that the fallback is not
+              # what is loaded.
+              - not loki_running_config.analytics.reporting_enabled
+              - loki_running_config.schema_config.configs[0].from == '2025-05-01'
+            fail_msg: "The role's configuration did not reach Loki"
+            success_msg: "The role's configuration reached Loki"
 
-    # `loki_auth_enabled` defaults to true in this role and is absent from the
-    # stock image's fallback configuration (where it therefore defaults to
-    # false). Loki does not report it through /config at all, so refusing an
-    # untenanted write is the only way to observe it - and it is the one probe
-    # here that the fallback configuration would answer differently.
-    - name: Push a log line to Loki without naming a tenant
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/push"
-        method: POST
-        status_code: [401]
-        body_format: json
-        body:
-          streams:
-            - stream:
-                job: "{{ loki_verify_stream_label }}"
-              values:
-                - ["1", "{{ loki_verify_log_line }}"]
-      register: loki_untenanted_push
+        # `loki_auth_enabled` defaults to true in this role and is absent from the
+        # stock image's fallback configuration (where it therefore defaults to
+        # false). Loki does not report it through /config at all, so refusing an
+        # untenanted write is the only way to observe it - and it is the one probe
+        # here that the fallback configuration would answer differently.
+        - name: Push a log line to Loki without naming a tenant
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/push"
+            method: POST
+            status_code: [401]
+            body_format: json
+            body:
+              streams:
+                - stream:
+                    job: "{{ loki_verify_stream_label }}"
+                  values:
+                    - ["1", "{{ loki_verify_log_line }}"]
+          register: loki_untenanted_push
 
-    - name: Assert Loki refuses an untenanted write
-      ansible.builtin.assert:
-        that: loki_untenanted_push.status == 401
-        fail_msg: >-
-          Loki accepted a write without a tenant ({{ loki_untenanted_push.status }}),
-          so the role's multi-tenancy setting did not reach it
-        success_msg: "Loki refuses writes that do not name a tenant"
+        - name: Assert Loki refuses an untenanted write
+          ansible.builtin.assert:
+            that: loki_untenanted_push.status == 401
+            fail_msg: >-
+              Loki accepted a write without a tenant ({{ loki_untenanted_push.status }}),
+              so the role's multi-tenancy setting did not reach it
+            success_msg: "Loki refuses writes that do not name a tenant"
 
-    # Everything above proves that Loki is running and holds the right
-    # configuration. What follows proves that it does its job: a log line
-    # written through the ingest API comes back out of the query API.
-    #
-    # Loki timestamps are nanoseconds since the epoch and are rejected when
-    # they stray too far from the clock of the machine running Loki, so the
-    # time comes from that machine rather than from the controller.
-    - name: Determine the current time on the Loki host
-      ansible.builtin.command:
-        cmd: date +%s
-      register: loki_host_time
-      changed_when: false
+        # Everything above proves that Loki is running and holds the right
+        # configuration. What follows proves that it does its job: a log line
+        # written through the ingest API comes back out of the query API.
+        #
+        # Loki timestamps are nanoseconds since the epoch and are rejected when
+        # they stray too far from the clock of the machine running Loki, so the
+        # time comes from that machine rather than from the controller.
+        - name: Determine the current time on the Loki host
+          ansible.builtin.command:
+            cmd: date +%s
+          register: loki_host_time
+          changed_when: false
 
-    - name: Determine the round-trip timestamps
-      ansible.builtin.set_fact:
-        loki_push_timestamp_ns: "{{ loki_host_time.stdout | trim }}000000000"
-        loki_query_start_ns: "{{ (loki_host_time.stdout | trim | int) - 3600 }}000000000"
-        loki_query_end_ns: "{{ (loki_host_time.stdout | trim | int) + 3600 }}000000000"
-        loki_verify_selector: '{job="{{ loki_verify_stream_label }}"}'
+        - name: Determine the round-trip timestamps
+          ansible.builtin.set_fact:
+            loki_push_timestamp_ns: "{{ loki_host_time.stdout | trim }}000000000"
+            loki_query_start_ns: "{{ (loki_host_time.stdout | trim | int) - 3600 }}000000000"
+            loki_query_end_ns: "{{ (loki_host_time.stdout | trim | int) + 3600 }}000000000"
+            loki_verify_selector: '{job="{{ loki_verify_stream_label }}"}'
 
-    - name: Push a log line to Loki
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/push"
-        method: POST
-        status_code: [204]
-        headers:
-          X-Scope-OrgID: "{{ loki_verify_tenant_id }}"
-        body_format: json
-        body:
-          streams:
-            - stream:
-                job: "{{ loki_verify_stream_label }}"
-              values:
-                - ["{{ loki_push_timestamp_ns }}", "{{ loki_verify_log_line }}"]
-      register: loki_push
+        - name: Push a log line to Loki
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/push"
+            method: POST
+            status_code: [204]
+            headers:
+              X-Scope-OrgID: "{{ loki_verify_tenant_id }}"
+            body_format: json
+            body:
+              streams:
+                - stream:
+                    job: "{{ loki_verify_stream_label }}"
+                  values:
+                    - ["{{ loki_push_timestamp_ns }}", "{{ loki_verify_log_line }}"]
+          register: loki_push
 
-    - name: Assert Loki accepted the log line
-      ansible.builtin.assert:
-        that: loki_push.status == 204
-        fail_msg: "Loki did not accept the log line ({{ loki_push.status | default('no response') }})"
-        success_msg: "Loki accepted the log line"
+        - name: Assert Loki accepted the log line
+          ansible.builtin.assert:
+            that: loki_push.status == 204
+            fail_msg: "Loki did not accept the log line ({{ loki_push.status | default('no response') }})"
+            success_msg: "Loki accepted the log line"
 
-    # Ingestion is asynchronous: the write is acknowledged before the entry is
-    # queryable, so this has to keep asking rather than ask once.
-    - name: Wait for the pushed log line to become queryable (up to 2m)
-      ansible.builtin.uri:
-        url: >-
-          http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/query_range?query={{
-          loki_verify_selector | urlencode }}&start={{ loki_query_start_ns }}&end={{ loki_query_end_ns }}&limit=10
-        method: GET
-        headers:
-          X-Scope-OrgID: "{{ loki_verify_tenant_id }}"
-        return_content: true
-      register: loki_query
-      until: >-
-        loki_query.json.status | default('') == 'success'
-        and loki_query.json.data.result | default([]) | length > 0
-      retries: 24
-      delay: 5
+        # Ingestion is asynchronous: the write is acknowledged before the entry is
+        # queryable, so this has to keep asking rather than ask once.
+        - name: Wait for the pushed log line to become queryable (up to 2m)
+          ansible.builtin.uri:
+            url: >-
+              http://localhost:{{ loki_container_http_host_bind_port }}/loki/api/v1/query_range?query={{
+              loki_verify_selector | urlencode }}&start={{ loki_query_start_ns }}&end={{ loki_query_end_ns }}&limit=10
+            method: GET
+            headers:
+              X-Scope-OrgID: "{{ loki_verify_tenant_id }}"
+            return_content: true
+          register: loki_query
+          until: >-
+            loki_query.json.status | default('') == 'success'
+            and loki_query.json.data.result | default([]) | length > 0
+          retries: 24
+          delay: 5
 
-    # Kept as scalars rather than as the whole sample, so that nothing depends
-    # on a templated dictionary surviving as a dictionary.
-    - name: Determine what Loki handed back
-      ansible.builtin.set_fact:
-        loki_returned_job: "{{ loki_query.json.data.result | map(attribute='stream.job') | first }}"
-        loki_returned_line: "{{ loki_query.json.data.result | map(attribute='values') | first | first | last }}"
+        # Kept as scalars rather than as the whole sample, so that nothing depends
+        # on a templated dictionary surviving as a dictionary.
+        - name: Determine what Loki handed back
+          ansible.builtin.set_fact:
+            loki_returned_job: "{{ loki_query.json.data.result | map(attribute='stream.job') | first }}"
+            loki_returned_line: "{{ loki_query.json.data.result | map(attribute='values') | first | first | last }}"
 
-    - name: Assert Loki hands back the log line that was written to it
-      ansible.builtin.assert:
-        that:
-          - loki_query.json.data.resultType == 'streams'
-          - loki_returned_job == loki_verify_stream_label
-          - loki_returned_line == loki_verify_log_line
-        fail_msg: "Loki did not return the log line that was written to it: {{ loki_query.json.data.result }}"
-        success_msg: "Loki stores a log line and hands it back when queried"
+        - name: Assert Loki hands back the log line that was written to it
+          ansible.builtin.assert:
+            that:
+              - loki_query.json.data.resultType == 'streams'
+              - loki_returned_job == loki_verify_stream_label
+              - loki_returned_line == loki_verify_log_line
+            fail_msg: "Loki did not return the log line that was written to it: {{ loki_query.json.data.result }}"
+            success_msg: "Loki stores a log line and hands it back when queried"
 
-    # A last sanity check on the metrics endpoint that this role exists to feed
-    # into Prometheus. The tenant label is the one this scenario named, so this
-    # also confirms that the write above was accounted for.
-    - name: Retrieve the Loki metrics endpoint
-      ansible.builtin.uri:
-        url: "http://localhost:{{ loki_container_http_host_bind_port }}/metrics"
-        method: GET
-        return_content: true
-      register: loki_metrics
+        # A last sanity check on the metrics endpoint that this role exists to feed
+        # into Prometheus. The tenant label is the one this scenario named, so this
+        # also confirms that the write above was accounted for.
+        - name: Retrieve the Loki metrics endpoint
+          ansible.builtin.uri:
+            url: "http://localhost:{{ loki_container_http_host_bind_port }}/metrics"
+            method: GET
+            return_content: true
+          register: loki_metrics
 
-    - name: Assert Loki serves metrics about the log line it received
-      ansible.builtin.assert:
-        that:
-          - "'loki_build_info{' in loki_metrics.content"
-          - "'loki_distributor_lines_received_total{' in loki_metrics.content"
-          - '(''tenant="'' ~ loki_verify_tenant_id ~ ''"'') in loki_metrics.content'
-        fail_msg: "Loki did not serve the expected metrics"
-        success_msg: "Loki serves metrics about the log line it received"
+        - name: Assert Loki serves metrics about the log line it received
+          ansible.builtin.assert:
+            that:
+              - "'loki_build_info{' in loki_metrics.content"
+              - "'loki_distributor_lines_received_total{' in loki_metrics.content"
+              - '(''tenant="'' ~ loki_verify_tenant_id ~ ''"'') in loki_metrics.content'
+            fail_msg: "Loki did not serve the expected metrics"
+            success_msg: "Loki serves metrics about the log line it received"
 
-    - name: Show the Loki verification summary
-      ansible.builtin.debug:
-        msg:
-          - "Loki systemd: {{ loki_service.status.ActiveState }}"
-          - "Loki version: {{ loki_buildinfo.json.version }}"
-          - "Loki gRPC port: {{ loki_running_config.server.grpc_listen_port }}"
-          - "Loki query series limit: {{ loki_running_config.limits_config.max_query_series }}"
-          - "Loki round-trip: {{ loki_returned_job }} / {{ loki_returned_line }}"
+        - name: Show the Loki verification summary
+          ansible.builtin.debug:
+            msg:
+              - "Loki systemd: {{ loki_service.status.ActiveState }}"
+              - "Loki version: {{ loki_buildinfo.json.version }}"
+              - "Loki gRPC port: {{ loki_running_config.server.grpc_listen_port }}"
+              - "Loki query series limit: {{ loki_running_config.limits_config.max_query_series }}"
+              - "Loki round-trip: {{ loki_returned_job }} / {{ loki_returned_line }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.
