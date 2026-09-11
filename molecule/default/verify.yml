@@ -10,6 +10,10 @@
   become: true
   gather_facts: false
 
+  vars:
+    loki_verify_units:
+      - loki.service
+
   tasks:
     - name: Verify that Loki works
       block:
@@ -21,13 +25,14 @@
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
             name: loki_defaults
 
-        - name: Wait for the Loki systemd service to become active (up to 180s)
+        - name: Wait for the Loki systemd services to become active (up to 180s each)
           ansible.builtin.systemd_service:
-            name: loki.service
-          register: loki_service
-          until: loki_service.status.ActiveState == 'active'
+            name: "{{ item }}"
+          register: loki_services
+          until: loki_services.status.ActiveState == 'active'
           retries: 36
           delay: 5
+          loop: "{{ loki_verify_units }}"
           # So that giving up is reported by the assertion below rather than as a
           # wall of systemd unit properties.
           failed_when: false
@@ -35,17 +40,20 @@
         # `Restart=always` in the systemd unit means that even a container which crashes
         # and gets restarted reads as active here, so this is a precondition rather than
         # a result.
-        - name: Assert the Loki systemd service is active
+        - name: Assert the Loki systemd services are active
           ansible.builtin.assert:
-            that: loki_service.status.ActiveState == 'active'
-            fail_msg: "loki.service is not active ({{ loki_service.status.ActiveState }})"
-            success_msg: "loki.service is active"
+            that: loki_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(loki_verify_units | zip(loki_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
 
-        - name: Retrieve the Loki systemd service log for debugging
+        - name: Retrieve the Loki systemd services log for debugging
           when: loki_debug_service_enabled | bool
           ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=loki.service
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
           changed_when: false
+          loop: "{{ loki_verify_units }}"
 
         # A systemd unit reaching "active" only means that `docker start` has not
         # exited yet. /ready is the first thing the Loki process itself has to
@@ -250,7 +258,7 @@
         - name: Show the Loki verification summary
           ansible.builtin.debug:
             msg:
-              - "Loki systemd: {{ loki_service.status.ActiveState }}"
+              - "Loki systemd: {% for unit, state in loki_verify_units | zip(loki_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "Loki version: {{ loki_buildinfo.json.version }}"
               - "Loki gRPC port: {{ loki_running_config.server.grpc_listen_port }}"
               - "Loki query series limit: {{ loki_running_config.limits_config.max_query_series }}"
