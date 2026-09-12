@@ -76,7 +76,7 @@
         - name: Assert Loki reports itself ready
           ansible.builtin.assert:
             that: "'ready' in loki_ready.content"
-            fail_msg: "Loki is not ready: {{ loki_ready.content | default('no content') }}"
+            fail_msg: "Loki did not report it was ready: {{ loki_ready.content | default('no response') }}"
             success_msg: "Loki reports itself ready"
 
         # Tying the running version to `loki_version` is what makes this scenario a
