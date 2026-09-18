@@ -43,7 +43,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for arg in loki_container_extra_arguments %}
       {{ arg }} \
       {% endfor %}
-      {{ loki_container_image }}
+      {{ loki_container_image }} \
+      {% for arg in loki_process_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
 
 {% for network in loki_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ loki_identifier }}

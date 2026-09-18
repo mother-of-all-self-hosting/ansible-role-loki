@@ -127,6 +127,12 @@ loki_container_extra_arguments: "{{ loki_container_extra_arguments_auto + loki_c
 loki_container_extra_arguments_auto: []
 loki_container_extra_arguments_custom: []
 
+# A list of extra arguments to pass to the process inside the container
+# Example: ['--SOME_ARGUMENT']
+loki_process_extra_arguments: "{{ loki_process_extra_arguments_auto + loki_process_extra_arguments_custom }}"
+loki_process_extra_arguments_auto: []
+loki_process_extra_arguments_custom: []
+
 # Specifies the value of the `X-XSS-Protection` header
 # Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
 #
