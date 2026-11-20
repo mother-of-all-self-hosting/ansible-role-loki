@@ -36,7 +36,6 @@
   with_items:
     - loki_uid
     - loki_gid
-    - loki_container_network
 
 - name: Run if Traefik is enabled
   when: loki_container_labels_traefik_enabled | bool
